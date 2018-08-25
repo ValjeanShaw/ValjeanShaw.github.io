@@ -79,23 +79,23 @@
 
 
 
-<meta name="description" content="这两个属于常在数据库事务中被提及，乐观锁和悲观锁属于思想级别，是为了保持事务的隔离性以及数据库的一致性而被业内定义出来的一种手段,并不属于数据库锁机制,但是悲观锁是依赖于数据库的锁机制实现的。乐观锁不是数据库自带的，需要自己去实现。  定义 乐观锁：当前事务操作数据时，认为其他事务不会修改正在读取的数据具体： 事务读取 ，不上锁 事务更新，在提交数据更新之前，先检查在该事务读取数据后（更新前），">
+<meta name="description" content="这两个属于常在数据库事务中被提及，乐观锁和悲观锁属于思想级别，是为了保持事务的隔离性以及数据库的一致性而被业内定义出来的一种手段,并不属于数据库锁机制,但是悲观锁是依赖于数据库的锁机制实现的。乐观锁不是数据库自带的，需要自己去实现。  [TOC] 定义 乐观锁：当前事务操作数据时，认为其他事务不会修改正在读取的数据具体： 事务读取 ，不上锁 事务更新，在提交数据更新之前，先检查在该事务读取数据后">
 <meta name="keywords" content="锁">
 <meta property="og:type" content="article">
 <meta property="og:title" content="乐观锁和悲观锁">
 <meta property="og:url" content="https://github.com/ValjeanShaw/2018/07/12/乐观锁和悲观锁/index.html">
 <meta property="og:site_name" content="马鸣风萧萧">
-<meta property="og:description" content="这两个属于常在数据库事务中被提及，乐观锁和悲观锁属于思想级别，是为了保持事务的隔离性以及数据库的一致性而被业内定义出来的一种手段,并不属于数据库锁机制,但是悲观锁是依赖于数据库的锁机制实现的。乐观锁不是数据库自带的，需要自己去实现。  定义 乐观锁：当前事务操作数据时，认为其他事务不会修改正在读取的数据具体： 事务读取 ，不上锁 事务更新，在提交数据更新之前，先检查在该事务读取数据后（更新前），">
+<meta property="og:description" content="这两个属于常在数据库事务中被提及，乐观锁和悲观锁属于思想级别，是为了保持事务的隔离性以及数据库的一致性而被业内定义出来的一种手段,并不属于数据库锁机制,但是悲观锁是依赖于数据库的锁机制实现的。乐观锁不是数据库自带的，需要自己去实现。  [TOC] 定义 乐观锁：当前事务操作数据时，认为其他事务不会修改正在读取的数据具体： 事务读取 ，不上锁 事务更新，在提交数据更新之前，先检查在该事务读取数据后">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://github.com/2018/07/12/乐观锁和悲观锁/1.png">
 <meta property="og:image" content="https://github.com/2018/07/12/乐观锁和悲观锁/5.png">
 <meta property="og:image" content="https://github.com/2018/07/12/乐观锁和悲观锁/2.png">
 <meta property="og:image" content="https://github.com/2018/07/12/乐观锁和悲观锁/3.png">
 <meta property="og:image" content="https://github.com/2018/07/12/乐观锁和悲观锁/4.png">
-<meta property="og:updated_time" content="2018-07-25T01:12:58.065Z">
+<meta property="og:updated_time" content="2018-08-20T16:27:20.155Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="乐观锁和悲观锁">
-<meta name="twitter:description" content="这两个属于常在数据库事务中被提及，乐观锁和悲观锁属于思想级别，是为了保持事务的隔离性以及数据库的一致性而被业内定义出来的一种手段,并不属于数据库锁机制,但是悲观锁是依赖于数据库的锁机制实现的。乐观锁不是数据库自带的，需要自己去实现。  定义 乐观锁：当前事务操作数据时，认为其他事务不会修改正在读取的数据具体： 事务读取 ，不上锁 事务更新，在提交数据更新之前，先检查在该事务读取数据后（更新前），">
+<meta name="twitter:description" content="这两个属于常在数据库事务中被提及，乐观锁和悲观锁属于思想级别，是为了保持事务的隔离性以及数据库的一致性而被业内定义出来的一种手段,并不属于数据库锁机制,但是悲观锁是依赖于数据库的锁机制实现的。乐观锁不是数据库自带的，需要自己去实现。  [TOC] 定义 乐观锁：当前事务操作数据时，认为其他事务不会修改正在读取的数据具体： 事务读取 ，不上锁 事务更新，在提交数据更新之前，先检查在该事务读取数据后">
 <meta name="twitter:image" content="https://github.com/2018/07/12/乐观锁和悲观锁/1.png">
 
 
@@ -395,6 +395,7 @@
         <blockquote>
 <p>这两个属于常在数据库事务中被提及，乐观锁和悲观锁属于思想级别，是为了保持事务的隔离性以及数据库的一致性而被业内定义出来的一种手段,并不属于数据库锁机制,但是悲观锁是依赖于数据库的锁机制实现的。乐观锁不是数据库自带的，需要自己去实现。</p>
 </blockquote>
+<p>[TOC]</p>
 <h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><ul>
 <li>乐观锁：<br>当前事务操作数据时，认为其他事务不会修改正在读取的数据<br>具体：<ol>
 <li>事务读取 ，不上锁</li>
@@ -558,7 +559,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
