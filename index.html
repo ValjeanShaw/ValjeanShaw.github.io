@@ -81,7 +81,7 @@
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="马鸣风萧萧">
-<meta property="og:url" content="https://github.com/ValjeanShaw/index.html">
+<meta property="og:url" content="https://blog.valjean.xin/index.html">
 <meta property="og:site_name" content="马鸣风萧萧">
 <meta property="og:locale" content="zh-Hans">
 <meta name="twitter:card" content="summary">
@@ -115,7 +115,7 @@
 
 
 
-  <link rel="canonical" href="https://github.com/ValjeanShaw/"/>
+  <link rel="canonical" href="https://blog.valjean.xin/"/>
 
 
 
@@ -293,7 +293,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://github.com/ValjeanShaw/2018/08/26/java线程通信/">
+    <link itemprop="mainEntityOfPage" href="https://blog.valjean.xin/2018/08/26/java线程通信/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="xiaoran">
@@ -400,7 +400,7 @@
             <p>[TOC]</p>
 <blockquote>
 <p>这是Java线程技术的第二篇，主要讲解java线程之间的通信和交互.</p>
-<p>第一篇详见 <a href="https://blog.valjean.xin/2018/07/25/java%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/" target="_blank" rel="noopener">Java线程基础</a></p>
+<p>第一篇详见 <a href="https://blog.valjean.xin/2018/07/25/java%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/">Java线程基础</a></p>
 </blockquote>
 <h2 id="等待通知-wait-notify"><a href="#等待通知-wait-notify" class="headerlink" title="等待通知   wait   notify"></a>等待通知   <em>wait</em>   <em>notify</em></h2><p>​    想要实现一个这样的需求：一个线程修改了一个对象的值，而另一个线程感知到了变化，然后进行相应的操作。类似于消费者和生产者的概念，只是对象是两个线程。这时候，简单的操作，是另一个线程一直不断的循环监听一个变量，当变量如果进行改变，再进行相应的操作。但是如果采用这种做法，会存在两个比较明显的问题：1.开销过大，监听线程不断进行刷新判断，但是基本上都是无效的“尝试”，为了防止过快刷新，可采用睡眠的方式，但又导致了第二个问题；2，难以确保及时性，在睡眠是，基本上不消耗性能，但是睡眠期间，难以及时的发现条件已经修改。</p>
 <p>​    Java为我们提供了 wait/notify方法，很优雅的解决了这个问题。指的是，⼀个线程A调⽤了对象O的wait()⽅法进⼊ 等待状态，⽽另⼀个线程B调⽤了对象O的notify()或者notifyAll()⽅ 法，线程A收到通知后从对象O的wait()⽅法返回，进⽽执⾏后续操作。上述两个线程通过对象O来完成交互，⽽对象上的wait()和 notify()/notifyAll()的关系就如同开关信号⼀样，⽤来完成等待⽅和通 知⽅之间的交互⼯作。    </p>
@@ -488,7 +488,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://github.com/ValjeanShaw/2018/07/25/java线程基础/">
+    <link itemprop="mainEntityOfPage" href="https://blog.valjean.xin/2018/07/25/java线程基础/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="xiaoran">
@@ -653,7 +653,7 @@
 <p>抛出InterruptedException的线程，中断位被清除了，另外一个线程，就没有被清除</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本篇文章主要讲解Java线程的基础，使用。重点在于Java线程的创建和开启。</p>
 <p>全部代码见：</p>
-<p>​    <a href="https://github.com/ValjeanShaw/MyConcurrent/tree/develop/src/main/java/ThreadPackage">https://github.com/ValjeanShaw/MyConcurrent/tree/develop/src/main/java/ThreadPackage</a></p>
+<p>​    <a href="https://github.com/ValjeanShaw/MyConcurrent/tree/develop/src/main/java/ThreadPackage" target="_blank" rel="noopener">https://github.com/ValjeanShaw/MyConcurrent/tree/develop/src/main/java/ThreadPackage</a></p>
 
           
         
@@ -702,7 +702,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://github.com/ValjeanShaw/2018/07/16/synchronized关键字/">
+    <link itemprop="mainEntityOfPage" href="https://blog.valjean.xin/2018/07/16/synchronized关键字/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="xiaoran">
@@ -880,7 +880,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://github.com/ValjeanShaw/2018/07/12/乐观锁和悲观锁/">
+    <link itemprop="mainEntityOfPage" href="https://blog.valjean.xin/2018/07/12/乐观锁和悲观锁/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="xiaoran">
@@ -1000,10 +1000,10 @@
 `update t_goods set status = #{status},version=version+1 where id=#{id} and version=#{version}`
 </code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">* 悲观锁</span><br><span class="line"> * 共享锁实现   </span><br><span class="line"> sql语句：   `lock in share mode`</span><br></pre></td></tr></table></figure>
 <p>例子：开启三个终端，非自动提交事务模式<br>     一个终端开启共享锁</p>
-<p><img src="/2018/07/12/乐观锁和悲观锁/1.png" alt="image-20180712131634658"></p>
-<p>​    另一个终端对数据进行读，读成功，叠加共享锁也可以<br><img src="/2018/07/12/乐观锁和悲观锁/5.png" alt="image-20180712131634658"><br>     第三个终端对数据进行update操作，写失败，一直等待<br><img src="/2018/07/12/乐观锁和悲观锁/2.png" alt="image-20180712131634658"></p>
+<p><img src="/07/12/乐观锁和悲观锁/1.png" alt="image-20180712131634658"></p>
+<p>​    另一个终端对数据进行读，读成功，叠加共享锁也可以<br><img src="/07/12/乐观锁和悲观锁/5.png" alt="image-20180712131634658"><br>     第三个终端对数据进行update操作，写失败，一直等待<br><img src="/07/12/乐观锁和悲观锁/2.png" alt="image-20180712131634658"></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">* 排它锁实现	 </span><br><span class="line">	sql语句：`for update`</span><br></pre></td></tr></table></figure>
-<p>例子：开启两个终端<br>    第一个执行排它锁，暂不提交事务<br><img src="/2018/07/12/乐观锁和悲观锁/3.png" alt="image-20180712131634658"><br>    第二个终端执行两个操作<br>select:  查询出未更改前的数据<br>update:等待，如下图<br><img src="/2018/07/12/乐观锁和悲观锁/4.png" alt="image-20180712131634658"></p>
+<p>例子：开启两个终端<br>    第一个执行排它锁，暂不提交事务<br><img src="/07/12/乐观锁和悲观锁/3.png" alt="image-20180712131634658"><br>    第二个终端执行两个操作<br>select:  查询出未更改前的数据<br>update:等待，如下图<br><img src="/07/12/乐观锁和悲观锁/4.png" alt="image-20180712131634658"></p>
 <p>当第一个终端提交事务  <code>commit work</code>,第二个终端的update操作执行完成</p>
 <h2 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h2><ol>
 <li>乐观锁：  <ul>
@@ -1065,7 +1065,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://github.com/ValjeanShaw/2018/07/10/面试真题/">
+    <link itemprop="mainEntityOfPage" href="https://blog.valjean.xin/2018/07/10/面试真题/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="xiaoran">
