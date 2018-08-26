@@ -400,7 +400,7 @@
             <p>[TOC]</p>
 <blockquote>
 <p>这是Java线程技术的第二篇，主要讲解java线程之间的通信和交互.</p>
-<p>第一篇详见 <a href="https://blog.valjean.xin/2018/07/25/java%E7%BA%BF%E7%A8%8B/" target="_blank" rel="noopener">Java线程基础</a></p>
+<p>第一篇详见 <a href="https://blog.valjean.xin/2018/07/25/java%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/" target="_blank" rel="noopener">Java线程基础</a></p>
 </blockquote>
 <h2 id="等待通知-wait-notify"><a href="#等待通知-wait-notify" class="headerlink" title="等待通知   wait   notify"></a>等待通知   <em>wait</em>   <em>notify</em></h2><p>​    想要实现一个这样的需求：一个线程修改了一个对象的值，而另一个线程感知到了变化，然后进行相应的操作。类似于消费者和生产者的概念，只是对象是两个线程。这时候，简单的操作，是另一个线程一直不断的循环监听一个变量，当变量如果进行改变，再进行相应的操作。但是如果采用这种做法，会存在两个比较明显的问题：1.开销过大，监听线程不断进行刷新判断，但是基本上都是无效的“尝试”，为了防止过快刷新，可采用睡眠的方式，但又导致了第二个问题；2，难以确保及时性，在睡眠是，基本上不消耗性能，但是睡眠期间，难以及时的发现条件已经修改。</p>
 <p>​    Java为我们提供了 wait/notify方法，很优雅的解决了这个问题。指的是，⼀个线程A调⽤了对象O的wait()⽅法进⼊ 等待状态，⽽另⼀个线程B调⽤了对象O的notify()或者notifyAll()⽅ 法，线程A收到通知后从对象O的wait()⽅法返回，进⽽执⾏后续操作。上述两个线程通过对象O来完成交互，⽽对象上的wait()和 notify()/notifyAll()的关系就如同开关信号⼀样，⽤来完成等待⽅和通 知⽅之间的交互⼯作。    </p>
@@ -507,7 +507,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/07/25/java线程基础/" itemprop="url">java线程-基础</a></h1>
+                <a class="post-title-link" href="/2018/07/25/java线程基础/" itemprop="url">一篇文章说清楚java线程-基础</a></h1>
         
 
         <div class="post-meta">
