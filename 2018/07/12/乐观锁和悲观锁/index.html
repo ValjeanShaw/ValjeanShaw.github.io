@@ -87,17 +87,17 @@
 <meta property="og:site_name" content="马鸣风萧萧">
 <meta property="og:description" content="这两个属于常在数据库事务中被提及，乐观锁和悲观锁属于思想级别，是为了保持事务的隔离性以及数据库的一致性而被业内定义出来的一种手段,并不属于数据库锁机制,但是悲观锁是依赖于数据库的锁机制实现的。乐观锁不是数据库自带的，需要自己去实现。  [TOC] 定义 乐观锁：当前事务操作数据时，认为其他事务不会修改正在读取的数据具体： 事务读取 ，不上锁 事务更新，在提交数据更新之前，先检查在该事务读取数据后">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://blog.valjean.xin/07/12/乐观锁和悲观锁/1.png">
-<meta property="og:image" content="https://blog.valjean.xin/07/12/乐观锁和悲观锁/1.png">
-<meta property="og:image" content="https://blog.valjean.xin/07/12/乐观锁和悲观锁/5.png">
-<meta property="og:image" content="https://blog.valjean.xin/07/12/乐观锁和悲观锁/2.png">
-<meta property="og:image" content="https://blog.valjean.xin/07/12/乐观锁和悲观锁/3.png">
-<meta property="og:image" content="https://blog.valjean.xin/07/12/乐观锁和悲观锁/4.png">
+<meta property="og:image" content="https://blog.valjean.xin/2018/07/12/乐观锁和悲观锁/1.png">
+<meta property="og:image" content="https://blog.valjean.xin/2018/07/12/乐观锁和悲观锁/1.png">
+<meta property="og:image" content="https://blog.valjean.xin/2018/07/12/乐观锁和悲观锁/5.png">
+<meta property="og:image" content="https://blog.valjean.xin/2018/07/12/乐观锁和悲观锁/2.png">
+<meta property="og:image" content="https://blog.valjean.xin/2018/07/12/乐观锁和悲观锁/3.png">
+<meta property="og:image" content="https://blog.valjean.xin/2018/07/12/乐观锁和悲观锁/4.png">
 <meta property="og:updated_time" content="2018-09-03T14:32:37.869Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="乐观锁和悲观锁">
 <meta name="twitter:description" content="这两个属于常在数据库事务中被提及，乐观锁和悲观锁属于思想级别，是为了保持事务的隔离性以及数据库的一致性而被业内定义出来的一种手段,并不属于数据库锁机制,但是悲观锁是依赖于数据库的锁机制实现的。乐观锁不是数据库自带的，需要自己去实现。  [TOC] 定义 乐观锁：当前事务操作数据时，认为其他事务不会修改正在读取的数据具体： 事务读取 ，不上锁 事务更新，在提交数据更新之前，先检查在该事务读取数据后">
-<meta name="twitter:image" content="https://blog.valjean.xin/07/12/乐观锁和悲观锁/1.png">
+<meta name="twitter:image" content="https://blog.valjean.xin/2018/07/12/乐观锁和悲观锁/1.png">
 
 
 
@@ -411,11 +411,11 @@
 `update t_goods set status = #{status},version=version+1 where id=#{id} and version=#{version}`
 </code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">* 悲观锁</span><br><span class="line"> * 共享锁实现   </span><br><span class="line"> sql语句：   `lock in share mode`</span><br></pre></td></tr></table></figure>
 <p>例子：开启三个终端，非自动提交事务模式<br>     一个终端开启共享锁</p>
-<p><img src="/07/12/乐观锁和悲观锁/1.png" alt="1"></p>
-<p><img src="/07/12/乐观锁和悲观锁/1.png" alt="1"></p>
-<p>​    另一个终端对数据进行读，读成功，叠加共享锁也可以<br><img src="/07/12/乐观锁和悲观锁/5.png" alt="1"><br>     第三个终端对数据进行update操作，写失败，一直等待<br><img src="/07/12/乐观锁和悲观锁/2.png" alt="1"></p>
+<p><img src="/2018/07/12/乐观锁和悲观锁/1.png" alt="1"></p>
+<p><img src="/2018/07/12/乐观锁和悲观锁/1.png" alt="1"></p>
+<p>​    另一个终端对数据进行读，读成功，叠加共享锁也可以<br><img src="/2018/07/12/乐观锁和悲观锁/5.png" alt="1"><br>     第三个终端对数据进行update操作，写失败，一直等待<br><img src="/2018/07/12/乐观锁和悲观锁/2.png" alt="1"></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">* 排它锁实现	 </span><br><span class="line">	sql语句：`for update`</span><br></pre></td></tr></table></figure>
-<p>例子：开启两个终端<br>    第一个执行排它锁，暂不提交事务<br><img src="/07/12/乐观锁和悲观锁/3.png" alt="image-20180712131634658"><br>    第二个终端执行两个操作<br>select:  查询出未更改前的数据<br>update:等待，如下图<br><img src="/07/12/乐观锁和悲观锁/4.png" alt="image-20180712131634658"></p>
+<p>例子：开启两个终端<br>    第一个执行排它锁，暂不提交事务<br><img src="/2018/07/12/乐观锁和悲观锁/3.png" alt="image-20180712131634658"><br>    第二个终端执行两个操作<br>select:  查询出未更改前的数据<br>update:等待，如下图<br><img src="/2018/07/12/乐观锁和悲观锁/4.png" alt="image-20180712131634658"></p>
 <p>当第一个终端提交事务  <code>commit work</code>,第二个终端的update操作执行完成</p>
 <h2 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h2><ol>
 <li>乐观锁：  <ul>
