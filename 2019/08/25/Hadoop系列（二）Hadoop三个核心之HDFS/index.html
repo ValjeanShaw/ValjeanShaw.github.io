@@ -26,7 +26,7 @@
 <meta property="og:image" content="http://yoursite.com/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/image-20190827232356723.png">
 <meta property="og:image" content="http://yoursite.com/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/5D3FAC2F-F9B2-4F08-B5EA-68771B0BA0F8.png">
 <meta property="og:image" content="http://yoursite.com/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/1228818-20180308190320147-1328604927.png">
-<meta property="og:updated_time" content="2019-08-27T16:49:43.000Z">
+<meta property="og:updated_time" content="2019-08-28T03:13:20.981Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hadoop系列（二）Hadoop三大核心之HDFS基础">
 <meta name="twitter:description" content="喵了个喵，我又遇到瓶颈了  [TOC] 针对海量数据，核心问题始终是计算和存储。当数据集的大小超过一台独立物理计算机的存储能力时，就有必要对它进行分区并存储到多台机器上。跨机器存储的文件系统就被成为分布式文件系统。分布式系统架构于网络之上，势必引入网络编程的复杂性，如何实现容忍节点故障但不丢失数据，是HDFS的重要挑战。 hdfs基础Hadoop 自带HDFS分布式文件系统：Hadoop Dis">
@@ -342,11 +342,8 @@
 <p><img src="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/image-20190827232356723.png" alt="image-20190827232356723"></p>
 <p>只有在NameNode重启时，edit logs才会合并到fsimage文件中，从而得到一个文件系统的最新快照。但是在产品集群中NameNode是很少重启的，这也意味着当NameNode运行了很长时间后，edit logs文件会变得很大。这会引发以下严重问题：1.edit logs文件会变的很大，不容易管理；2.重启会花费很长时间，因为有很多改动，可能经历好几个小时甚至几十个小时，这是不能容忍的。</p>
 <h4 id="Secondary-NameNode-SNN"><a href="#Secondary-NameNode-SNN" class="headerlink" title="Secondary NameNode   (SNN)"></a>Secondary NameNode   (SNN)</h4><p>SecondaryNameNode就是来帮助解决上述问题的，职责是帮助NN合并edits log成fsimage，减少NameNode启动时间</p>
-<p>SNN 合并edits时间</p>
-<ul>
-<li>配置文件设置时间间隔</li>
-<li>edits log大小    默认 64M</li>
-</ul>
+<p>SNN 合并edits触发条件：<br>1.定期触发。默认一小时。<br>2.时间未到的情况，edits log大小超过容量也会触发。默认 64M。</p>
+<p>配置文件core-site.xml  可设置时间间隔（fs.checkpoint.period ）和edits log容量（fs.checkpoint.size）。</p>
 <p><img src="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/5D3FAC2F-F9B2-4F08-B5EA-68771B0BA0F8.png" alt="5D3FAC2F-F9B2-4F08-B5EA-68771B0BA0F8"></p>
 <h2 id="Hadoop-特点"><a href="#Hadoop-特点" class="headerlink" title="Hadoop 特点"></a>Hadoop 特点</h2><p>HDFS也是按照Master和Slave的结构。分NameNode、SecondaryNameNode、DataNode这几个角色。</p>
 <p><img src="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/1228818-20180308190320147-1328604927.png" alt="img"></p>
@@ -373,7 +370,7 @@
         <p><span>本文标题:</span><a href="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/">Hadoop系列（二）Hadoop三大核心之HDFS基础</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">ID喵</a></p>
         <p><span>发布时间:</span>2019-08-25, 22:27:28</p>
-        <p><span>最后更新:</span>2019-08-28, 00:49:43</p>
+        <p><span>最后更新:</span>2019-08-28, 11:13:20</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/" title="Hadoop系列（二）Hadoop三大核心之HDFS基础">http://yoursite.com/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/　　作者: ID喵" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
