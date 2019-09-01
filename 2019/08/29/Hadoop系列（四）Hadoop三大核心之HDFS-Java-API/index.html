@@ -15,17 +15,18 @@
 
 
 
-<meta name="description" content="title: Hadoop系列（四）Hadoop三大核心之HDFS Java APIdate: 2019-09-01 14:48:35categories: Hadooptags: Hadoop    喵了个喵，我又遇到瓶颈了  [TOC] HDFS 设计的主要目的是对海量数据进行存储，也就是说在其上能够存储很大量的文件。 HDFS 将这些文件分割之后，存储在不同的 DataNode 上，HDFS">
+<meta name="description" content="喵了个喵，我又遇到瓶颈了  [TOC] HDFS 设计的主要目的是对海量数据进行存储，也就是说在其上能够存储很大量的文件。 HDFS 将这些文件分割之后，存储在不同的 DataNode 上，HDFS 提供了通过Java API 对 HDFS 里面的文件进行操作的功能，数据块在 DataNode 上的存放位置，对于开发者来说是透明的。 使用 Java API 可以完成对 HDFS 的各种操作，如新">
+<meta name="keywords" content="Hadoop">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ID喵">
-<meta property="og:url" content="http://yoursite.com/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/index.html">
+<meta property="og:title" content="Hadoop系列（四）Hadoop三大核心之HDFS Java API">
+<meta property="og:url" content="http://yoursite.com/2019/08/29/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/index.html">
 <meta property="og:site_name" content="ID喵">
-<meta property="og:description" content="title: Hadoop系列（四）Hadoop三大核心之HDFS Java APIdate: 2019-09-01 14:48:35categories: Hadooptags: Hadoop    喵了个喵，我又遇到瓶颈了  [TOC] HDFS 设计的主要目的是对海量数据进行存储，也就是说在其上能够存储很大量的文件。 HDFS 将这些文件分割之后，存储在不同的 DataNode 上，HDFS">
+<meta property="og:description" content="喵了个喵，我又遇到瓶颈了  [TOC] HDFS 设计的主要目的是对海量数据进行存储，也就是说在其上能够存储很大量的文件。 HDFS 将这些文件分割之后，存储在不同的 DataNode 上，HDFS 提供了通过Java API 对 HDFS 里面的文件进行操作的功能，数据块在 DataNode 上的存放位置，对于开发者来说是透明的。 使用 Java API 可以完成对 HDFS 的各种操作，如新">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-09-01T08:40:57.564Z">
+<meta property="og:updated_time" content="2019-09-01T08:44:57.745Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ID喵">
-<meta name="twitter:description" content="title: Hadoop系列（四）Hadoop三大核心之HDFS Java APIdate: 2019-09-01 14:48:35categories: Hadooptags: Hadoop    喵了个喵，我又遇到瓶颈了  [TOC] HDFS 设计的主要目的是对海量数据进行存储，也就是说在其上能够存储很大量的文件。 HDFS 将这些文件分割之后，存储在不同的 DataNode 上，HDFS">
+<meta name="twitter:title" content="Hadoop系列（四）Hadoop三大核心之HDFS Java API">
+<meta name="twitter:description" content="喵了个喵，我又遇到瓶颈了  [TOC] HDFS 设计的主要目的是对海量数据进行存储，也就是说在其上能够存储很大量的文件。 HDFS 将这些文件分割之后，存储在不同的 DataNode 上，HDFS 提供了通过Java API 对 HDFS 里面的文件进行操作的功能，数据块在 DataNode 上的存放位置，对于开发者来说是透明的。 使用 Java API 可以完成对 HDFS 的各种操作，如新">
 
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
@@ -57,7 +58,7 @@
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>ID喵</title>
+<title>Hadoop系列（四）Hadoop三大核心之HDFS Java API | ID喵</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -255,8 +256,8 @@
       <div class="body-wrap"><article id="post-Hadoop系列（四）Hadoop三大核心之HDFS-Java-API" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/" class="article-date">
-      <time datetime="2019-09-01T06:48:35.000Z" itemprop="datePublished">2019-09-01</time>
+      <a href="/2019/08/29/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/" class="article-date">
+      <time datetime="2019-08-29T15:51:48.000Z" itemprop="datePublished">2019-08-29</time>
 </a>
 
 
@@ -267,13 +268,36 @@
       <input type="hidden" class="isFancy" />
     
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Hadoop系列（四）Hadoop三大核心之HDFS Java API
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hadoop/">Hadoop</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>title: Hadoop系列（四）Hadoop三大核心之HDFS Java API<br>date: 2019-09-01 14:48:35<br>categories: Hadoop<br>tags: Hadoop</p>
-<blockquote>
-</blockquote>
-<blockquote>
+        <blockquote>
 <p>喵了个喵，我又遇到瓶颈了</p>
 </blockquote>
 <p>[TOC]</p>
@@ -332,8 +356,6 @@
 <li>数据写到hdfs中</li>
 </ol>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testWriteData</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    FSDataOutputStream out = fileSystem.create(<span class="keyword">new</span> Path(<span class="string">"/yy.jpg"</span>), <span class="keyword">false</span>);</span><br><span class="line">    FileInputStream in = <span class="keyword">new</span> FileInputStream(<span class="string">"~/Download/wechatpic_20190309221605.jpg"</span>);</span><br><span class="line">    <span class="keyword">byte</span>[] buf = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">    <span class="keyword">int</span> read = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> ((read = in.read(buf)) != -<span class="number">1</span>) &#123;</span><br><span class="line">        out.write(buf, <span class="number">0</span>, read);</span><br><span class="line">    &#125;</span><br><span class="line">    out.close();</span><br><span class="line">    fileSystem.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
       
     </div>
     
@@ -341,13 +363,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/"></a></p>
+        <p><span>本文标题:</span><a href="/2019/08/29/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/">Hadoop系列（四）Hadoop三大核心之HDFS Java API</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">ID喵</a></p>
-        <p><span>发布时间:</span>2019-09-01, 14:48:35</p>
-        <p><span>最后更新:</span>2019-09-01, 16:40:57</p>
+        <p><span>发布时间:</span>2019-08-29, 23:51:48</p>
+        <p><span>最后更新:</span>2019-09-01, 16:44:57</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/" title="">http://yoursite.com/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/　　作者: ID喵" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2019/08/29/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/" title="Hadoop系列（四）Hadoop三大核心之HDFS Java API">http://yoursite.com/2019/08/29/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2019/08/29/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/　　作者: ID喵" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
@@ -359,10 +381,16 @@
 
     <nav id="article-nav">
         
-        
-            <div id="article-nav-older" class="article-nav-title">
+            <div id="article-nav-newer" class="article-nav-title">
                 <a href="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/">
                     Hadoop系列（三）Hadoop三大核心之HDFS shell常用命令
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/">
+                    Hadoop系列（二）Hadoop三大核心之HDFS基础
                 </a>
             </div>
         
@@ -410,7 +438,7 @@
         </div>
         <script>
             window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"　| ID喵　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+                "common":{"bdSnsKey":{},"bdText":"Hadoop系列（四）Hadoop三大核心之HDFS Java API　| ID喵　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
         </script>
     
 
@@ -430,19 +458,21 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+            <a href="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/" title="上一篇: Hadoop系列（三）Hadoop三大核心之HDFS shell常用命令">
+                <i class="fa fa-angle-left"></i>
+            </a>
         
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/" title="下一篇: Hadoop系列（三）Hadoop三大核心之HDFS shell常用命令">
+            <a href="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/" title="下一篇: Hadoop系列（二）Hadoop三大核心之HDFS基础">
                 <i class="fa fa-angle-right"></i>
             </a>
         
     </div>
 
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/">Hadoop系列（四）Hadoop三大核心之HDFS-Java-API</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/">Hadoop系列（三）Hadoop三大核心之HDFS shell常用命令</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/">Hadoop系列（二）Hadoop三大核心之HDFS基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/24/Hadoop开篇/">Hadoop系列（一）开篇简介</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/">Hadoop系列（三）Hadoop三大核心之HDFS shell常用命令</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/29/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/">Hadoop系列（四）Hadoop三大核心之HDFS Java API</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/">Hadoop系列（二）Hadoop三大核心之HDFS基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/24/Hadoop开篇/">Hadoop系列（一）开篇简介</a></li></ul>
 
 
 
