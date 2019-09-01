@@ -255,101 +255,11 @@
 </nav>
       <div class="body-wrap">
   
-    <article id="post-Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/" class="article-date">
-      <time datetime="2019-08-29T15:51:48.000Z" itemprop="datePublished">2019-08-29</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/">Hadoop系列（三）Hadoop三大核心之HDFS shell常用命令</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <blockquote>
-<p>喵了个喵，我又遇到瓶颈了</p>
-</blockquote>
-<p>[TOC]</p>
-<h2 id="HDFS常用命令"><a href="#HDFS常用命令" class="headerlink" title="HDFS常用命令"></a>HDFS常用命令</h2><h3 id="help-查看所有命令"><a href="#help-查看所有命令" class="headerlink" title="help 查看所有命令"></a>help 查看所有命令</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs help</code></p>
-<h3 id="查看路径文件"><a href="#查看路径文件" class="headerlink" title="查看路径文件"></a>查看路径文件</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -ls /</code></p>
-<h3 id="创建文件夹"><a href="#创建文件夹" class="headerlink" title="创建文件夹"></a>创建文件夹</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -mkdir /test</code></p>
-<h3 id="创建多级文件夹"><a href="#创建多级文件夹" class="headerlink" title="创建多级文件夹"></a>创建多级文件夹</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -mkdir -p /test/test1/test2</code></p>
-<h3 id="查看指定目录下和子目录下所有文件"><a href="#查看指定目录下和子目录下所有文件" class="headerlink" title="查看指定目录下和子目录下所有文件"></a>查看指定目录下和子目录下所有文件</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -ls -R /test</code></p>
-<h3 id="上传文件"><a href="#上传文件" class="headerlink" title="上传文件"></a>上传文件</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -put part.txt /test</code></p>
-<p>or</p>
-<p><code>[172.23.7.9:hadoop]$ hadoop fs -copyFromLocal part.txt /test</code></p>
-<h3 id="下载文件"><a href="#下载文件" class="headerlink" title="下载文件"></a>下载文件</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -get /test/part.txt ~/test</code></p>
-<p>or</p>
-<p><code>[172.23.7.9:hadoop]$ hadoop fs -copyToLocal /test/part.txt ~/test</code></p>
-<h3 id="合并下载"><a href="#合并下载" class="headerlink" title="合并下载"></a>合并下载</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -getmerge /test/part0.txt /test/part1.txt ./temp.txt</code></p>
-<h3 id="复制"><a href="#复制" class="headerlink" title="复制"></a>复制</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -cp /test/part.txt /output</code></p>
-<h3 id="移动"><a href="#移动" class="headerlink" title="移动"></a>移动</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -mv /test/part.txt /output</code></p>
-<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -rm /test/part.txt</code></p>
-<p>强制删除</p>
-<p><code>[172.23.7.9:hadoop]$ hadoop fs -rm -r /test/part.txt</code></p>
-<h3 id="查看文件内容"><a href="#查看文件内容" class="headerlink" title="查看文件内容"></a>查看文件内容</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -cat /test/part.txt</code></p>
-<h3 id="显示文件大小"><a href="#显示文件大小" class="headerlink" title="显示文件大小"></a>显示文件大小</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -du -h /test/part.txt</code></p>
-<h3 id="test"><a href="#test" class="headerlink" title="test"></a>test</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -test -[ezd] /test/part.txt</code></p>
-<p>选项：<br>-e 检查文件是否存在。如果存在则返回0。<br>-z 检查文件是否是0字节。如果是则返回0。<br>-d 如果路径是个目录，则返回1，否则返回0。</p>
-<h2 id="web界面"><a href="#web界面" class="headerlink" title="web界面"></a>web界面</h2><p><code>http://xx.xx.xx.xx:9870/explorer.html#/</code></p>
-<p><img src="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/image-20190830010745946.png" alt="image-20190830010745946"></p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hadoop/">Hadoop</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
     <article id="post-Hadoop系列（四）Hadoop三大核心之HDFS-Java-API" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2019/08/29/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/" class="article-date">
-      <time datetime="2019-08-29T15:51:48.000Z" itemprop="datePublished">2019-08-29</time>
+      <a href="/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/" class="article-date">
+      <time datetime="2019-09-01T08:51:48.000Z" itemprop="datePublished">2019-09-01</time>
 </a>
 
 
@@ -364,7 +274,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2019/08/29/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/">Hadoop系列（四）Hadoop三大核心之HDFS Java API</a>
+      <a class="article-title" href="/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/">Hadoop系列（四）Hadoop三大核心之HDFS Java API</a>
     </h1>
   
 
@@ -433,6 +343,96 @@
 <li>数据写到hdfs中</li>
 </ol>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testWriteData</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    FSDataOutputStream out = fileSystem.create(<span class="keyword">new</span> Path(<span class="string">"/yy.jpg"</span>), <span class="keyword">false</span>);</span><br><span class="line">    FileInputStream in = <span class="keyword">new</span> FileInputStream(<span class="string">"~/Download/wechatpic_20190309221605.jpg"</span>);</span><br><span class="line">    <span class="keyword">byte</span>[] buf = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">    <span class="keyword">int</span> read = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> ((read = in.read(buf)) != -<span class="number">1</span>) &#123;</span><br><span class="line">        out.write(buf, <span class="number">0</span>, read);</span><br><span class="line">    &#125;</span><br><span class="line">    out.close();</span><br><span class="line">    fileSystem.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hadoop/">Hadoop</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/" class="article-date">
+      <time datetime="2019-08-29T15:51:48.000Z" itemprop="datePublished">2019-08-29</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/">Hadoop系列（三）Hadoop三大核心之HDFS shell常用命令</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <blockquote>
+<p>喵了个喵，我又遇到瓶颈了</p>
+</blockquote>
+<p>[TOC]</p>
+<h2 id="HDFS常用命令"><a href="#HDFS常用命令" class="headerlink" title="HDFS常用命令"></a>HDFS常用命令</h2><h3 id="help-查看所有命令"><a href="#help-查看所有命令" class="headerlink" title="help 查看所有命令"></a>help 查看所有命令</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs help</code></p>
+<h3 id="查看路径文件"><a href="#查看路径文件" class="headerlink" title="查看路径文件"></a>查看路径文件</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -ls /</code></p>
+<h3 id="创建文件夹"><a href="#创建文件夹" class="headerlink" title="创建文件夹"></a>创建文件夹</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -mkdir /test</code></p>
+<h3 id="创建多级文件夹"><a href="#创建多级文件夹" class="headerlink" title="创建多级文件夹"></a>创建多级文件夹</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -mkdir -p /test/test1/test2</code></p>
+<h3 id="查看指定目录下和子目录下所有文件"><a href="#查看指定目录下和子目录下所有文件" class="headerlink" title="查看指定目录下和子目录下所有文件"></a>查看指定目录下和子目录下所有文件</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -ls -R /test</code></p>
+<h3 id="上传文件"><a href="#上传文件" class="headerlink" title="上传文件"></a>上传文件</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -put part.txt /test</code></p>
+<p>or</p>
+<p><code>[172.23.7.9:hadoop]$ hadoop fs -copyFromLocal part.txt /test</code></p>
+<h3 id="下载文件"><a href="#下载文件" class="headerlink" title="下载文件"></a>下载文件</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -get /test/part.txt ~/test</code></p>
+<p>or</p>
+<p><code>[172.23.7.9:hadoop]$ hadoop fs -copyToLocal /test/part.txt ~/test</code></p>
+<h3 id="合并下载"><a href="#合并下载" class="headerlink" title="合并下载"></a>合并下载</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -getmerge /test/part0.txt /test/part1.txt ./temp.txt</code></p>
+<h3 id="复制"><a href="#复制" class="headerlink" title="复制"></a>复制</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -cp /test/part.txt /output</code></p>
+<h3 id="移动"><a href="#移动" class="headerlink" title="移动"></a>移动</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -mv /test/part.txt /output</code></p>
+<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -rm /test/part.txt</code></p>
+<p>强制删除</p>
+<p><code>[172.23.7.9:hadoop]$ hadoop fs -rm -r /test/part.txt</code></p>
+<h3 id="查看文件内容"><a href="#查看文件内容" class="headerlink" title="查看文件内容"></a>查看文件内容</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -cat /test/part.txt</code></p>
+<h3 id="显示文件大小"><a href="#显示文件大小" class="headerlink" title="显示文件大小"></a>显示文件大小</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -du -h /test/part.txt</code></p>
+<h3 id="test"><a href="#test" class="headerlink" title="test"></a>test</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -test -[ezd] /test/part.txt</code></p>
+<p>选项：<br>-e 检查文件是否存在。如果存在则返回0。<br>-z 检查文件是否是0字节。如果是则返回0。<br>-d 如果路径是个目录，则返回1，否则返回0。</p>
+<h2 id="web界面"><a href="#web界面" class="headerlink" title="web界面"></a>web界面</h2><p><code>http://xx.xx.xx.xx:9870/explorer.html#/</code></p>
+<p><img src="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/image-20190830010745946.png" alt="image-20190830010745946"></p>
+
       
     </div>
     
