@@ -14,17 +14,18 @@
 <meta name="author" content="ID喵">
 
 
-    
-    
 
-
-<meta property="og:type" content="website">
+<meta name="description" content="title: Hadoop系列（四）Hadoop三大核心之HDFS Java APIdate: 2019-09-01 14:48:35categories: Hadooptags: Hadoop    喵了个喵，我又遇到瓶颈了  [TOC] HDFS 设计的主要目的是对海量数据进行存储，也就是说在其上能够存储很大量的文件。 HDFS 将这些文件分割之后，存储在不同的 DataNode 上，HDFS">
+<meta property="og:type" content="article">
 <meta property="og:title" content="ID喵">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta property="og:url" content="http://yoursite.com/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/index.html">
 <meta property="og:site_name" content="ID喵">
+<meta property="og:description" content="title: Hadoop系列（四）Hadoop三大核心之HDFS Java APIdate: 2019-09-01 14:48:35categories: Hadooptags: Hadoop    喵了个喵，我又遇到瓶颈了  [TOC] HDFS 设计的主要目的是对海量数据进行存储，也就是说在其上能够存储很大量的文件。 HDFS 将这些文件分割之后，存储在不同的 DataNode 上，HDFS">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-09-01T08:40:57.564Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ID喵">
+<meta name="twitter:description" content="title: Hadoop系列（四）Hadoop三大核心之HDFS Java APIdate: 2019-09-01 14:48:35categories: Hadooptags: Hadoop    喵了个喵，我又遇到瓶颈了  [TOC] HDFS 设计的主要目的是对海量数据进行存储，也就是说在其上能够存储很大量的文件。 HDFS 将这些文件分割之后，存储在不同的 DataNode 上，HDFS">
 
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
@@ -52,8 +53,6 @@
 <link rel="stylesheet" href="/css/style.css">
 
 
-    <style> .article { opacity: 0;} </style>
-
 
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
@@ -67,8 +66,8 @@
     var yiliaConfig = {
         fancybox: true,
         animate: true,
-        isHome: true,
-        isPost: false,
+        isHome: false,
+        isPost: true,
         isArchive: false,
         isTag: false,
         isCategory: false,
@@ -253,9 +252,7 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
-      <div class="body-wrap">
-  
-    <article id="post-Hadoop系列（四）Hadoop三大核心之HDFS-Java-API" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-Hadoop系列（四）Hadoop三大核心之HDFS-Java-API" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
       <a href="/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/" class="article-date">
@@ -340,341 +337,85 @@
       
     </div>
     
-    <div class="article-info article-info-index">
-      
-      
-
-      
-      
-      <div class="clearfix"></div>
-    </div>
-    
   </div>
   
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/" class="article-date">
-      <time datetime="2019-08-29T15:51:48.000Z" itemprop="datePublished">2019-08-29</time>
-</a>
-
-
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/"></a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">ID喵</a></p>
+        <p><span>发布时间:</span>2019-09-01, 14:48:35</p>
+        <p><span>最后更新:</span>2019-09-01, 16:40:57</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/" title="">http://yoursite.com/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/　　作者: ID喵" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
     </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+
+
+
+    <nav id="article-nav">
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/">Hadoop系列（三）Hadoop三大核心之HDFS shell常用命令</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <blockquote>
-<p>喵了个喵，我又遇到瓶颈了</p>
-</blockquote>
-<p>[TOC]</p>
-<h2 id="HDFS常用命令"><a href="#HDFS常用命令" class="headerlink" title="HDFS常用命令"></a>HDFS常用命令</h2><h3 id="help-查看所有命令"><a href="#help-查看所有命令" class="headerlink" title="help 查看所有命令"></a>help 查看所有命令</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs help</code></p>
-<h3 id="查看路径文件"><a href="#查看路径文件" class="headerlink" title="查看路径文件"></a>查看路径文件</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -ls /</code></p>
-<h3 id="创建文件夹"><a href="#创建文件夹" class="headerlink" title="创建文件夹"></a>创建文件夹</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -mkdir /test</code></p>
-<h3 id="创建多级文件夹"><a href="#创建多级文件夹" class="headerlink" title="创建多级文件夹"></a>创建多级文件夹</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -mkdir -p /test/test1/test2</code></p>
-<h3 id="查看指定目录下和子目录下所有文件"><a href="#查看指定目录下和子目录下所有文件" class="headerlink" title="查看指定目录下和子目录下所有文件"></a>查看指定目录下和子目录下所有文件</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -ls -R /test</code></p>
-<h3 id="上传文件"><a href="#上传文件" class="headerlink" title="上传文件"></a>上传文件</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -put part.txt /test</code></p>
-<p>or</p>
-<p><code>[172.23.7.9:hadoop]$ hadoop fs -copyFromLocal part.txt /test</code></p>
-<h3 id="下载文件"><a href="#下载文件" class="headerlink" title="下载文件"></a>下载文件</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -get /test/part.txt ~/test</code></p>
-<p>or</p>
-<p><code>[172.23.7.9:hadoop]$ hadoop fs -copyToLocal /test/part.txt ~/test</code></p>
-<h3 id="合并下载"><a href="#合并下载" class="headerlink" title="合并下载"></a>合并下载</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -getmerge /test/part0.txt /test/part1.txt ./temp.txt</code></p>
-<h3 id="复制"><a href="#复制" class="headerlink" title="复制"></a>复制</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -cp /test/part.txt /output</code></p>
-<h3 id="移动"><a href="#移动" class="headerlink" title="移动"></a>移动</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -mv /test/part.txt /output</code></p>
-<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -rm /test/part.txt</code></p>
-<p>强制删除</p>
-<p><code>[172.23.7.9:hadoop]$ hadoop fs -rm -r /test/part.txt</code></p>
-<h3 id="查看文件内容"><a href="#查看文件内容" class="headerlink" title="查看文件内容"></a>查看文件内容</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -cat /test/part.txt</code></p>
-<h3 id="显示文件大小"><a href="#显示文件大小" class="headerlink" title="显示文件大小"></a>显示文件大小</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -du -h /test/part.txt</code></p>
-<h3 id="test"><a href="#test" class="headerlink" title="test"></a>test</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -test -[ezd] /test/part.txt</code></p>
-<p>选项：<br>-e 检查文件是否存在。如果存在则返回0。<br>-z 检查文件是否是0字节。如果是则返回0。<br>-d 如果路径是个目录，则返回1，否则返回0。</p>
-<h2 id="web界面"><a href="#web界面" class="headerlink" title="web界面"></a>web界面</h2><p><code>http://xx.xx.xx.xx:9870/explorer.html#/</code></p>
-<p><img src="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/image-20190830010745946.png" alt="image-20190830010745946"></p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hadoop/">Hadoop</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Hadoop系列（二）Hadoop三个核心之HDFS" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/" class="article-date">
-      <time datetime="2019-08-25T14:27:28.000Z" itemprop="datePublished">2019-08-25</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/">Hadoop系列（二）Hadoop三大核心之HDFS基础</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <blockquote>
-<p>喵了个喵，我又遇到瓶颈了</p>
-</blockquote>
-<p>[TOC]</p>
-<p>针对海量数据，核心问题始终是计算和存储。当数据集的大小超过一台独立物理计算机的存储能力时，就有必要对它进行分区并存储到多台机器上。跨机器存储的文件系统就被成为分布式文件系统。分布式系统架构于网络之上，势必引入网络编程的复杂性，如何实现容忍节点故障但不丢失数据，是HDFS的重要挑战。</p>
-<h2 id="hdfs基础"><a href="#hdfs基础" class="headerlink" title="hdfs基础"></a>hdfs基础</h2><p>Hadoop 自带HDFS分布式文件系统：Hadoop Distributed Filesystem。也简称DFS。主要用来解决海量数据的存储问题。</p>
-<p>HDFS有以下两点特性</p>
-<ul>
-<li>文件系统：用于存储文件，通过统一目录树定位</li>
-<li>分布式：很多机器共同支撑其功能</li>
-</ul>
-<h3 id="重要概念"><a href="#重要概念" class="headerlink" title="重要概念"></a>重要概念</h3><h4 id="数据块"><a href="#数据块" class="headerlink" title="数据块"></a>数据块</h4><p>和一般的文件系统一样，HDFS也有块（block）的概念，HDFS上的文件也被划分为块大小的多个分块作为独立的存储单元。</p>
-<p>Hadoop 1.x 默认大小为64MB, 2.x和3.x均为128MB。具体指定版本的默认值，可参见官网<a href="http://hadoop.apache.org/docs/r3.0.0/hadoop-project-dist/hadoop-hdfs/HdfsDesign.html#Data_Blocks" target="_blank" rel="noopener">块的定义</a>。HDFS的块比磁盘的块大，是为了最小化寻址开销，减少寻址定位所需时间。</p>
-<p>与磁盘文件系统不一样的是*<em>HDFS中小于一个块大小的文件不会占据整个块的空间 *</em>例：当一个1MB的文件存储在一个128MB的块中时，文件只使用1MB的磁盘空间，而不是128MB。当一个150M的文件要存储到HDFS中，将会拆分成2个块，大小分别是128M、22M。</p>
-<p>设置数据块的好处：</p>
-<p>（1）一个文件的大小可以大于集群任意节点磁盘的容量</p>
-<p>（2）容易对数据进行备份，提高容错能力，块丢失可快速从其它节点复制</p>
-<p>（3）使用抽象块概念而非整个文件作为存储单元，大大简化存储子系统的设计</p>
-<p>HDFS集群有两类节点以管理节点-工作节点的方式运行。即NameNode和DataNode。</p>
-<h4 id="NameNode（NN）"><a href="#NameNode（NN）" class="headerlink" title="NameNode（NN）"></a>NameNode（NN）</h4><p>文件系统的管理节点。管理文件系统的命名空间，维护着文本系统树及整棵树内所有文件和目录。基于内存存储，在内存中保存着文件系统每个文件和每个数据块的引用关系以及块信息等。文件目录在NameNode重启后，需要重建。</p>
-<p>功能：</p>
-<ul>
-<li>接收客户端读写服务</li>
-<li>收集DataNode汇报的Block列表信息</li>
-</ul>
-<h4 id="DataNode（DN）"><a href="#DataNode（DN）" class="headerlink" title="DataNode（DN）"></a>DataNode（DN）</h4><p>文件系统的工作节点，多个节点共同工作。本地磁盘目录存储数据，文件形式。</p>
-<p>功能：</p>
-<ul>
-<li>文件形式存储数据（Block）</li>
-<li>存储Block的元数据信息文件 （md5）</li>
-<li>启动时向NameNode汇报block信息</li>
-<li>与NameNode保持心跳连接（3s/次）</li>
-</ul>
-<p>NameNode虽然以内存方式存储，但是NameNode也会在适当时候持久化两类文件到磁盘。</p>
-<ul>
-<li>fsimage：NameNode启动时对整个文件系统的快照</li>
-<li>edit logs：NameNode启动后，对文件系统的改动序列</li>
-</ul>
-<p><img src="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/image-20190827232356723.png" alt="image-20190827232356723"></p>
-<p>只有在NameNode重启时，edit logs才会合并到fsimage文件中，从而得到一个文件系统的最新快照。但是在产品集群中NameNode是很少重启的，这也意味着当NameNode运行了很长时间后，edit logs文件会变得很大。这会引发以下严重问题：1.edit logs文件会变的很大，不容易管理；2.重启会花费很长时间，因为有很多改动，可能经历好几个小时甚至几十个小时，这是不能容忍的。</p>
-<h4 id="Secondary-NameNode-SNN"><a href="#Secondary-NameNode-SNN" class="headerlink" title="Secondary NameNode   (SNN)"></a>Secondary NameNode   (SNN)</h4><p>SecondaryNameNode就是来帮助解决上述问题的，职责是帮助NN合并edits log成fsimage，减少NameNode启动时间</p>
-<p>SNN 合并edits触发条件：<br>1.定期触发。默认一小时。<br>2.时间未到的情况，edits log大小超过容量也会触发。默认 64M。</p>
-<p>配置文件core-site.xml  可设置时间间隔（fs.checkpoint.period ）和edits log容量（fs.checkpoint.size）。</p>
-<p><img src="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/5D3FAC2F-F9B2-4F08-B5EA-68771B0BA0F8.png" alt="5D3FAC2F-F9B2-4F08-B5EA-68771B0BA0F8"></p>
-<h2 id="Hadoop-特点"><a href="#Hadoop-特点" class="headerlink" title="Hadoop 特点"></a>Hadoop 特点</h2><p>HDFS也是按照Master和Slave的结构。分NameNode、SecondaryNameNode、DataNode这几个角色。</p>
-<p><img src="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/1228818-20180308190320147-1328604927.png" alt="img"></p>
-<p>因其架构方案，拥有很多特点：<br>        保存多个副本，且提供容错机制，副本丢失或宕机自动恢复（默认存3份）。<br>　　可运行在廉价的机器上<br>　　适合大数据的处理。HDFS默认会将文件分割成block。然后将block按键值对存储在HDFS上，并将键值对的映射存到内存中。</p>
-<p>当然HDFS也有其局限性：<br>1.低延时数据访问。在用户交互性的应用中，应用需要在ms或者几个s的时间内得到响应。由于HDFS为高吞吐率做了设计，也因此牺牲了快速响应。对于低延时的应用，可以考虑使用HBase或者Cassandra。<br>2.大量的小文件。标准的HDFS数据块的大小是64M，存储小文件并不会浪费实际的存储空间，但是无疑会增加了在NameNode上的元数据，大量的小文件会影响整个集群的性能。<br>3.多用户写入，修改文件。HDFS的文件只能有一个写入者，而且写操作只能在文件结尾以追加的方式进行。它不支持多个写入者，也不支持在文件写入后，对文件的任意位置的修改。<br>但是在大数据领域，分析的是已经存在的数据，这些数据一旦产生就不会修改，因此，HDFS的这些特性和设计局限也就很容易理解了。HDFS为大数据领域的数据分析，提供了非常重要而且十分基础的文件存储功能。</p>
-<h2 id="Hadoop-HA"><a href="#Hadoop-HA" class="headerlink" title="Hadoop HA"></a>Hadoop HA</h2><h4 id="可靠性"><a href="#可靠性" class="headerlink" title="可靠性"></a>可靠性</h4><ol>
-<li>冗余备份<br>每个文件存储成一系列数据块（Block）。为了容错，文件的所有数据块都会有副本（副本数量即复制因子，可配置）（dfs.replication）</li>
-<li>副本存放<br>采用机架感知（Rak-aware）的策略来改进数据的可靠性、高可用和网络带宽的利用率</li>
-<li>心跳检测<br>NameNode周期性地从集群中的每一个DataNode接受心跳包和块报告，收到心跳包说明该DataNode工作正常</li>
-<li>安全模式<br>系统启动时，NameNode会进入一个安全模式。此时不会出现数据块的写操作。</li>
-<li>数据完整性检测<br>HDFS客户端软件实现了对HDFS文件内容的校验和（Checksum）检查（dfs.bytes-per-checksum）。</li>
-</ol>
-<h4 id="单点故障问题"><a href="#单点故障问题" class="headerlink" title="单点故障问题"></a>单点故障问题</h4><p>因为NameNode部署为单点失效，存在单点故障问题，当NameNode，那么客户端或MapReduce作业均无法读写查看文件。注意HDFS已有存储不会丢失。</p>
-<p>解决方案：</p>
-<p>启动一个拥有文件系统元数据的新NameNode（这个一般不采用，因为复制元数据非常耗时间）<br>配置一对活动-备用（Active-Sandby）NameNode，活动NameNode失效时，备用NameNode立即接管，用户不会有明显中断感觉。<br>　　　　共享编辑日志文件（借助NFS、zookeeper等）<br>　　　　DataNode同时向两个NameNode汇报数据块信息<br>　　　　客户端采用特定机制处理 NameNode失效问题，该机制对用户透明</p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hadoop/">Hadoop</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Hadoop开篇" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2019/08/24/Hadoop开篇/" class="article-date">
-      <time datetime="2019-08-23T16:08:08.000Z" itemprop="datePublished">2019-08-24</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/">
+                    Hadoop系列（三）Hadoop三大核心之HDFS shell常用命令
+                </a>
+            </div>
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/08/24/Hadoop开篇/">Hadoop系列（一）开篇简介</a>
-    </h1>
-  
+    </nav>
 
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <blockquote>
-<p>喵了个喵，我又遇到瓶颈了</p>
-</blockquote>
-<p>[TOC]</p>
-<p>谁说大象不会跳舞</p>
-<h2 id="Hadoop是什么"><a href="#Hadoop是什么" class="headerlink" title="Hadoop是什么"></a>Hadoop是什么</h2><p>Hadoop的官网：<a href="http://hadoop.apache.org/" target="_blank" rel="noopener">http://hadoop.apache.org/</a></p>
-<p>官网定义：The Apache Hadoop software library is a framework that allows for the distributed processing of large data sets across clusters of computers using simple programming models.</p>
-<p>Hadoop： 适合大数据的分布式存储和计算平台</p>
-<p>现为Apache顶级开源项目，Hadoop不是指具体一个框架或者组件，它是Apache软件基金会下用Java语言开发的一个开源分布式计算平台。实现在大量计算机组成的集群中对海量数据进行分布式计算，适合大数据的分布式存储和计算平台。</p>
-<p>举个简单例子：假如说你有一个篮子水果，你想知道苹果和梨的数量是多少，那么只要一个一个数就可以知道有多少了。如果你有一个集装箱水果，这时候就需要很多人同时帮你数了，这相当于多进程或多线程。如果你很多个集装箱的水果，这时就需要分布式计算了，也就是Hadoop。Hadoopd之所谓会诞生，主要是由于进入到大数据时代，计算机需要处理的数据量太过庞大。这时就需要将这些庞大数据切割分配到N台计算机进行处理。当大量信息被分配到不同计算机进行处理时，要确保最终得到的结果正确就需要对这些分布处理的信息进行管理，hadoop就是这样的一套解决方案。</p>
-<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>1、Hadoop是Apache旗下的一套开源适合大数据的分布式存储和计算平台平台</p>
-<p>2、Hadoop提供的功能：利用服务器集群，根据户自定义业逻辑对海量数进行分布式处理</p>
-<p>hadoop的概念：</p>
-<p>　　狭义上： 就是apache的一个顶级项目：apahce hadoop</p>
-<p>　　广义上: 就是指以hadoop为核心的整个大数据处理体系</p>
-<h2 id="Hadoop的起源"><a href="#Hadoop的起源" class="headerlink" title="Hadoop的起源"></a>Hadoop的起源</h2><p>HADOOP最早起源于Nutch。Nutch的设计目标是构建一个大型的全网搜索引擎，为Apache Lucene项目的一部分，包括网页抓取、索引、查询等功能，但随着抓取网页数量的增加，遇到了严重的可扩展性问题——如何解决数十亿网页的存储和索引问题。<br>这个问题的解决方案源于Google的三大论文 ：GFS ，BigTable和MapReduce。受此启发的Doug Cutting（Hadoop之父）等人用业余时间实现了DFS和MapReduce机制。2006年2月从Nutch被分离出来，成为一套完整独立的软件，起名为Hadoop。</p>
-<p>Hadoop的成长过程经历了：Lucene–&gt;Nutch—&gt;Hadoop</p>
-<p>三篇论文的核心思想逐步演变，最终：</p>
-<p>GFS—-&gt;HDFS<br>Google MapReduce—-&gt;Hadoop MapReduce<br>BigTable—-&gt;HBase</p>
-<h2 id="Hadoop版本与架构核心"><a href="#Hadoop版本与架构核心" class="headerlink" title="Hadoop版本与架构核心"></a>Hadoop版本与架构核心</h2><p>Apache开源社区版本，现已到3.x </p>
-<p>Hadoop1.0版本两个核心：HDFS+MapReduce</p>
-<p>Hadoop2.0版本，引入了Yarn。核心：HDFS+Yarn+Mapreduce</p>
-<p>​    Yarn是资源调度框架。能够细粒度的管理和调度任务。此外，还能够支持其他的计算框架，比如spark等。</p>
-<p><img src="/2019/08/24/Hadoop开篇/1775767-20190824015110535-1305780494-20190824134434478.png" alt="img"></p>
-<p>Hadoop3.0版本，未引入新核心，在原核心上，升级了很多东西。具体参见官网</p>
-<h4 id="Hadoop的核心组件："><a href="#Hadoop的核心组件：" class="headerlink" title="Hadoop的核心组件："></a>Hadoop的核心组件：</h4><p>　　1）<strong>Hadoop Common</strong>：支持其他Hadoop模块的常用工具。</p>
-<p>　　2)  <strong>Hadoop分布式文件系统（HDFS™）</strong>：一种分布式文件系统，可提供对应用程序数据的高吞吐量访问。</p>
-<p>　　3)  <strong>Hadoop YARN</strong>：作业调度和集群资源管理的框架。</p>
-<p>　　<strong>4)  Hadoop MapReduce</strong>：一种用于并行处理大型数据集的基于YARN的系统。</p>
-<p>　　大数据的处理主要就是<strong>存储</strong>和<strong>计算</strong>。</p>
-<p>如果说安装hadoop集群，其实就是安装了两个东西： 一个操作系统YARN 和 一个文件系统HDFS。其实MapReduce就是运行在YARN之上的应用。</p>
-<p>操作系统 　　文件系统 　　应用程序<br>win7 　　　　NTFS　　　  QQ，WeChat<br>YARN 　　　 HDFS 　　    MapReduce</p>
-<h2 id="Hadoop理念"><a href="#Hadoop理念" class="headerlink" title="Hadoop理念"></a>Hadoop理念</h2><p>Hadoop可运行于一般的商用服务器上，具有高容错、高可靠性、高扩展性等特点</p>
-<p>特别适合写一次，读多次的场景</p>
-<p> 适合场景</p>
-<ul>
-<li>大规模数据</li>
-<li>流式数据（写一次，读多次）</li>
-<li>商用硬件（一般硬件）</li>
-</ul>
-<p>不适合场景</p>
-<ul>
-<li>低延时的数据访问</li>
-<li>大量的小文件</li>
-<li>频繁修改文件</li>
-</ul>
-<h2 id="PS"><a href="#PS" class="headerlink" title="PS"></a>PS</h2><p>Hadoop起源的三个google论文   中文版</p>
-<p><a href="http://blog.bizcloudsoft.com/wp-content/uploads/Google-File-System%E4%B8%AD%E6%96%87%E7%89%88_1.0.pdf" target="_blank" rel="noopener">GFS</a>  Google的分布式文件系统Google File System<br><a href="http://blog.bizcloudsoft.com/wp-content/uploads/Google-Bigtable%E4%B8%AD%E6%96%87%E7%89%88_1.0.pdf" target="_blank" rel="noopener">BigTable</a>  一个大型的分布式数据库<br><a href="http://blog.bizcloudsoft.com/wp-content/uploads/Google-MapReduce%E4%B8%AD%E6%96%87%E7%89%88_1.0.pdf" target="_blank" rel="noopener">MapReduce</a> Google的MapReduce开源分布式并行计算框架</p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hadoop/">Hadoop</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
   
 </article>
 
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概念"><span class="toc-number">1.</span> <span class="toc-text">概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#具体操作"><span class="toc-number">2.</span> <span class="toc-text">具体操作</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"　| ID喵　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
 
 
 
@@ -682,9 +423,33 @@
 
 
 
+    
 
-  
-  
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/" title="下一篇: Hadoop系列（三）Hadoop三大核心之HDFS shell常用命令">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/">Hadoop系列（四）Hadoop三大核心之HDFS-Java-API</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/">Hadoop系列（三）Hadoop三大核心之HDFS shell常用命令</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/">Hadoop系列（二）Hadoop三大核心之HDFS基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/24/Hadoop开篇/">Hadoop系列（一）开篇简介</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
 </div>
       <footer id="footer">
     <div class="outer">
