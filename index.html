@@ -289,13 +289,13 @@
 </blockquote>
 <p>[TOC]</p>
 <h2 id="cpu架构和工作原理"><a href="#cpu架构和工作原理" class="headerlink" title="cpu架构和工作原理"></a>cpu架构和工作原理</h2><p>计算机有5大基本组成部分，运算器，控制器，存储器，输入和输出。运算器和控制器封装到一起，加上寄存器组和cpu内部总线构成中央处理器（CPU）。cpu的根本任务，就是执行指令，对计算机来说，都是0，1组成的序列，cpu从逻辑上可以划分为3个模块：控制单元、运算单元和存储单元。这三个部分由cpu总线连接起来。</p>
-<p><img src="/2019/09/02/进程，线程与多核，多cpu之间的关系/xiaoran/Documents/myBlog/source/_posts/%E8%BF%9B%E7%A8%8B%EF%BC%8C%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%A4%9A%E6%A0%B8%EF%BC%8C%E5%A4%9Acpu%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB.assets/image-20190902202929616.png" alt="image-20190902202929616"></p>
+<p><img src="/2019/09/02/进程，线程与多核，多cpu之间的关系/image-20190902202929616.png" alt="image-20190902202929616"></p>
 <p>CPU的运行原理就是：控制单元在时序脉冲的作用下，将指令计数器里所指向的指令地址(这个地址是在内存里的)送到地址总线上去，然后CPU将这个地址里的指令读到指令寄存器进行译码。对于执行指令过程中所需要用到的数据，会将数据地址也送到地址总线，然后CPU把数据读到CPU的内部存储单元(就是内部寄存器)暂存起来，最后命令运算单元对数据进行处理加工。周而复始，一直这样执行下去。</p>
-<h2 id="多核cpu和多cpu"><a href="#多核cpu和多cpu" class="headerlink" title="多核cpu和多cpu"></a>多核cpu和多cpu</h2><h3 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h3><p>多个物理CPU，CPU通过总线进行通信，效率比较低。<img src="/2019/09/02/进程，线程与多核，多cpu之间的关系/xiaoran/Documents/myBlog/source/_posts/%E8%BF%9B%E7%A8%8B%EF%BC%8C%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%A4%9A%E6%A0%B8%EF%BC%8C%E5%A4%9Acpu%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB.assets/image-20190904121329148.png" alt="image-20190904121329148"></p>
+<h2 id="多核cpu和多cpu"><a href="#多核cpu和多cpu" class="headerlink" title="多核cpu和多cpu"></a>多核cpu和多cpu</h2><h3 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h3><p>多个物理CPU，CPU通过总线进行通信，效率比较低。<img src="/2019/09/02/进程，线程与多核，多cpu之间的关系/image-20190904121329148.png" alt="image-20190904121329148"></p>
 <p>多核CPU，不同的核通过L2 cache进行通信，存储和外设通过总线与CPU通信</p>
-<p><img src="/2019/09/02/进程，线程与多核，多cpu之间的关系/xiaoran/Documents/myBlog/source/_posts/%E8%BF%9B%E7%A8%8B%EF%BC%8C%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%A4%9A%E6%A0%B8%EF%BC%8C%E5%A4%9Acpu%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB.assets/image-20190904121349591.png" alt="image-20190904121349591"></p>
+<p><img src="/2019/09/02/进程，线程与多核，多cpu之间的关系/image-20190904121349591.png" alt="image-20190904121349591"></p>
 <h3 id="cpu的缓存"><a href="#cpu的缓存" class="headerlink" title="cpu的缓存"></a>cpu的缓存</h3><p>CPU缓存是位于CPU与内存之间的临时数据交换器，它的容量比内存小的多但是交换速度却比内存要快得多。CPU缓存一般直接跟CPU芯片集成或位于主板总线互连的独立芯片上。</p>
-<p><img src="/2019/09/02/进程，线程与多核，多cpu之间的关系/xiaoran/Documents/myBlog/source/_posts/%E8%BF%9B%E7%A8%8B%EF%BC%8C%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%A4%9A%E6%A0%B8%EF%BC%8C%E5%A4%9Acpu%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB.assets/image-20190905092214302.png" alt="image-20190905092214302"></p>
+<p><img src="/2019/09/02/进程，线程与多核，多cpu之间的关系/image-20190905092214302.png" alt="image-20190905092214302"></p>
 <p>随着多核CPU的发展，CPU缓存通常分成了三个级别：<code>L1</code>，<code>L2</code>，<code>L3</code>。级别越小越接近CPU，所以速度也更快，同时也代表着容量越小。L1 是最接近CPU的, 它容量最小（例如：<code>32K</code>），速度最快，每个核上都有一个 L1 缓存，L1 缓存每个核上其实有两个 L1 缓存, 一个用于存数据的 L1d Cache（Data Cache），一个用于存指令的 L1i Cache（Instruction Cache）。L2 缓存 更大一些（例如：<code>256K</code>），速度要慢一些, 一般情况下每个核上都有一个独立的L2 缓存; L3 缓存是三级缓存中最大的一级（例如3MB），同时也是最慢的一级, 在同一个CPU插槽之间的核共享一个 L3 缓存。</p>
 <p>读取数据过程。就像数据库缓存一样，首先在最快的缓存中找数据，如果缓存没有命中(Cache miss) 则往下一级找, 直到三级缓存都找不到时，向内存要数据。一次次地未命中，代表取数据消耗的时间越长。</p>
 <p>计算过程。程序以及数据被加载到主内存；指令和数据被加载到CPU的高速缓；CPU执行指令，把结果写到高速缓存；高速缓存中的数据写回主内存</p>
