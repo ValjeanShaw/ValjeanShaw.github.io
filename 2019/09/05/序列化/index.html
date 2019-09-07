@@ -23,12 +23,12 @@
 <meta property="og:site_name" content="ID喵">
 <meta property="og:description" content="喵了个喵，我又遇到瓶颈了  [TOC] 一、序列化和反序列化的定义和场景序列化：将对象写入到IO流中 反序列化：从IO流中恢复对象 序列化机制将实现序列化的Java对象转化为字节数组序列。可以使对象可以脱离程序而独立运行 场景和要求：保存到磁盘；在网络中传输。要保存到磁盘和在远程传输的java对象要求都必须是可序列化的。  二、序列化和反序列化的java实现Serializable接口一个标记接">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2019/09/05/序列化/image-20190906171907576.png">
-<meta property="og:updated_time" content="2019-09-07T07:01:48.003Z">
+<meta property="og:image" content="http://yoursite.com/2019/09/05/序列化/image-20190907150807138.png">
+<meta property="og:updated_time" content="2019-09-07T07:08:15.552Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="序列化">
 <meta name="twitter:description" content="喵了个喵，我又遇到瓶颈了  [TOC] 一、序列化和反序列化的定义和场景序列化：将对象写入到IO流中 反序列化：从IO流中恢复对象 序列化机制将实现序列化的Java对象转化为字节数组序列。可以使对象可以脱离程序而独立运行 场景和要求：保存到磁盘；在网络中传输。要保存到磁盘和在远程传输的java对象要求都必须是可序列化的。  二、序列化和反序列化的java实现Serializable接口一个标记接">
-<meta name="twitter:image" content="http://yoursite.com/2019/09/05/序列化/image-20190906171907576.png">
+<meta name="twitter:image" content="http://yoursite.com/2019/09/05/序列化/image-20190907150807138.png">
 
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
@@ -303,7 +303,7 @@
 <p>反序列化：从IO流中恢复对象</p>
 <p>序列化机制将实现序列化的Java对象转化为字节数组序列。可以使对象可以脱离程序而独立运行</p>
 <p>场景和要求：保存到磁盘；在网络中传输。要保存到磁盘和在远程传输的java对象要求都必须是可序列化的。</p>
-<p><img src="/2019/09/05/序列化/image-20190906171907576.png" alt="image-20190906171907576"></p>
+<p><img src="/2019/09/05/序列化/image-20190907150807138.png" alt="image-20190907150807138"></p>
 <h2 id="二、序列化和反序列化的java实现"><a href="#二、序列化和反序列化的java实现" class="headerlink" title="二、序列化和反序列化的java实现"></a>二、序列化和反序列化的java实现</h2><h3 id="Serializable接口"><a href="#Serializable接口" class="headerlink" title="Serializable接口"></a>Serializable接口</h3><p>一个标记接口，不用实现任何方法。一旦实现了此接口，该类的对象就是可序列化的。</p>
 <h4 id="序列化步骤"><a href="#序列化步骤" class="headerlink" title="序列化步骤"></a>序列化步骤</h4><p>1 创建ObjectOutputStream输出流；2 调用ObjectOutputStream对象的writeObject输出可序列化对象。</p>
 <p>若对象不是序列化对象，序列化是将抛出 NotSerializableException 异常</p>
@@ -331,7 +331,7 @@
         <p><span>本文标题:</span><a href="/2019/09/05/序列化/">序列化</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">ID喵</a></p>
         <p><span>发布时间:</span>2019-09-05, 23:55:22</p>
-        <p><span>最后更新:</span>2019-09-07, 15:01:48</p>
+        <p><span>最后更新:</span>2019-09-07, 15:08:15</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2019/09/05/序列化/" title="序列化">http://yoursite.com/2019/09/05/序列化/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2019/09/05/序列化/　　作者: ID喵" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>

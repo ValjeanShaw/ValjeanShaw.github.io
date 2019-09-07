@@ -292,7 +292,7 @@
 <p>反序列化：从IO流中恢复对象</p>
 <p>序列化机制将实现序列化的Java对象转化为字节数组序列。可以使对象可以脱离程序而独立运行</p>
 <p>场景和要求：保存到磁盘；在网络中传输。要保存到磁盘和在远程传输的java对象要求都必须是可序列化的。</p>
-<p><img src="/2019/09/05/序列化/image-20190906171907576.png" alt="image-20190906171907576"></p>
+<p><img src="/2019/09/05/序列化/image-20190907150807138.png" alt="image-20190907150807138"></p>
 <h2 id="二、序列化和反序列化的java实现"><a href="#二、序列化和反序列化的java实现" class="headerlink" title="二、序列化和反序列化的java实现"></a>二、序列化和反序列化的java实现</h2><h3 id="Serializable接口"><a href="#Serializable接口" class="headerlink" title="Serializable接口"></a>Serializable接口</h3><p>一个标记接口，不用实现任何方法。一旦实现了此接口，该类的对象就是可序列化的。</p>
 <h4 id="序列化步骤"><a href="#序列化步骤" class="headerlink" title="序列化步骤"></a>序列化步骤</h4><p>1 创建ObjectOutputStream输出流；2 调用ObjectOutputStream对象的writeObject输出可序列化对象。</p>
 <p>若对象不是序列化对象，序列化是将抛出 NotSerializableException 异常</p>
