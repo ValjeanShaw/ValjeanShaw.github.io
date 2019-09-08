@@ -15,20 +15,22 @@
 
 
 
-<meta name="description" content="喵了个喵，我又遇到瓶颈了  [TOC] 谁说大象不会跳舞 Hadoop是什么Hadoop的官网：http://hadoop.apache.org/ 官网定义：The Apache Hadoop software library is a framework that allows for the distributed processing of large data sets across c">
+<meta name="description" content="喵了个喵，我又遇到瓶颈了  [TOC] 首先，再回顾一下HDFS的架构图  HDFS写数据流程  客户端发送请求，调用DistributedFileSystem API的create方法去请求namenode，并告诉namenode上传文件的文件名、文件大小、文件拥有者。 namenode根据以上信息算出文件需要切成多少块block，以及block要存放在哪个datanode上，并将这些信息返回">
 <meta name="keywords" content="Hadoop">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hadoop系列（一）开篇简介">
-<meta property="og:url" content="http://yoursite.com/2019/08/24/Hadoop开篇/index.html">
+<meta property="og:title" content="Hadoop系列（五）Hadoop三大核心之HDFS 读写流程">
+<meta property="og:url" content="http://yoursite.com/2019/09/08/Hadoop系列（五）Hadoop三大核心之HDFS-读写流程/index.html">
 <meta property="og:site_name" content="ID喵">
-<meta property="og:description" content="喵了个喵，我又遇到瓶颈了  [TOC] 谁说大象不会跳舞 Hadoop是什么Hadoop的官网：http://hadoop.apache.org/ 官网定义：The Apache Hadoop software library is a framework that allows for the distributed processing of large data sets across c">
+<meta property="og:description" content="喵了个喵，我又遇到瓶颈了  [TOC] 首先，再回顾一下HDFS的架构图  HDFS写数据流程  客户端发送请求，调用DistributedFileSystem API的create方法去请求namenode，并告诉namenode上传文件的文件名、文件大小、文件拥有者。 namenode根据以上信息算出文件需要切成多少块block，以及block要存放在哪个datanode上，并将这些信息返回">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2019/08/24/Hadoop开篇/1775767-20190824015110535-1305780494-20190824134434478.png">
-<meta property="og:updated_time" content="2019-08-25T14:11:15.731Z">
+<meta property="og:image" content="http://yoursite.com/2019/09/08/Hadoop系列（五）Hadoop三大核心之HDFS-读写流程/image-20190908154045344.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/08/Hadoop系列（五）Hadoop三大核心之HDFS-读写流程/image-20190908154424852.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/08/Hadoop系列（五）Hadoop三大核心之HDFS-读写流程/image-20190908155152510.png">
+<meta property="og:updated_time" content="2019-09-08T08:06:24.872Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hadoop系列（一）开篇简介">
-<meta name="twitter:description" content="喵了个喵，我又遇到瓶颈了  [TOC] 谁说大象不会跳舞 Hadoop是什么Hadoop的官网：http://hadoop.apache.org/ 官网定义：The Apache Hadoop software library is a framework that allows for the distributed processing of large data sets across c">
-<meta name="twitter:image" content="http://yoursite.com/2019/08/24/Hadoop开篇/1775767-20190824015110535-1305780494-20190824134434478.png">
+<meta name="twitter:title" content="Hadoop系列（五）Hadoop三大核心之HDFS 读写流程">
+<meta name="twitter:description" content="喵了个喵，我又遇到瓶颈了  [TOC] 首先，再回顾一下HDFS的架构图  HDFS写数据流程  客户端发送请求，调用DistributedFileSystem API的create方法去请求namenode，并告诉namenode上传文件的文件名、文件大小、文件拥有者。 namenode根据以上信息算出文件需要切成多少块block，以及block要存放在哪个datanode上，并将这些信息返回">
+<meta name="twitter:image" content="http://yoursite.com/2019/09/08/Hadoop系列（五）Hadoop三大核心之HDFS-读写流程/image-20190908154045344.png">
 
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
@@ -60,7 +62,7 @@
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>Hadoop系列（一）开篇简介 | ID喵</title>
+<title>Hadoop系列（五）Hadoop三大核心之HDFS 读写流程 | ID喵</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -255,11 +257,11 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
-      <div class="body-wrap"><article id="post-Hadoop开篇" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-Hadoop系列（五）Hadoop三大核心之HDFS-读写流程" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2019/08/24/Hadoop开篇/" class="article-date">
-      <time datetime="2019-08-23T16:08:08.000Z" itemprop="datePublished">2019-08-24</time>
+      <a href="/2019/09/08/Hadoop系列（五）Hadoop三大核心之HDFS-读写流程/" class="article-date">
+      <time datetime="2019-09-08T07:31:34.000Z" itemprop="datePublished">2019-09-08</time>
 </a>
 
 
@@ -274,7 +276,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Hadoop系列（一）开篇简介
+      Hadoop系列（五）Hadoop三大核心之HDFS 读写流程
     </h1>
   
 
@@ -303,50 +305,34 @@
 <p>喵了个喵，我又遇到瓶颈了</p>
 </blockquote>
 <p>[TOC]</p>
-<p>谁说大象不会跳舞</p>
-<h2 id="Hadoop是什么"><a href="#Hadoop是什么" class="headerlink" title="Hadoop是什么"></a>Hadoop是什么</h2><p>Hadoop的官网：<a href="http://hadoop.apache.org/" target="_blank" rel="noopener">http://hadoop.apache.org/</a></p>
-<p>官网定义：The Apache Hadoop software library is a framework that allows for the distributed processing of large data sets across clusters of computers using simple programming models.</p>
-<p>Hadoop： 适合大数据的分布式存储和计算平台</p>
-<p>现为Apache顶级开源项目，Hadoop不是指具体一个框架或者组件，它是Apache软件基金会下用Java语言开发的一个开源分布式计算平台。实现在大量计算机组成的集群中对海量数据进行分布式计算，适合大数据的分布式存储和计算平台。</p>
-<p>举个简单例子：假如说你有一个篮子水果，你想知道苹果和梨的数量是多少，那么只要一个一个数就可以知道有多少了。如果你有一个集装箱水果，这时候就需要很多人同时帮你数了，这相当于多进程或多线程。如果你很多个集装箱的水果，这时就需要分布式计算了，也就是Hadoop。Hadoopd之所谓会诞生，主要是由于进入到大数据时代，计算机需要处理的数据量太过庞大。这时就需要将这些庞大数据切割分配到N台计算机进行处理。当大量信息被分配到不同计算机进行处理时，要确保最终得到的结果正确就需要对这些分布处理的信息进行管理，hadoop就是这样的一套解决方案。</p>
-<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>1、Hadoop是Apache旗下的一套开源适合大数据的分布式存储和计算平台平台</p>
-<p>2、Hadoop提供的功能：利用服务器集群，根据户自定义业逻辑对海量数进行分布式处理</p>
-<p>hadoop的概念：</p>
-<p>　　狭义上： 就是apache的一个顶级项目：apahce hadoop</p>
-<p>　　广义上: 就是指以hadoop为核心的整个大数据处理体系</p>
-<h2 id="Hadoop的起源"><a href="#Hadoop的起源" class="headerlink" title="Hadoop的起源"></a>Hadoop的起源</h2><p>HADOOP最早起源于Nutch。Nutch的设计目标是构建一个大型的全网搜索引擎，为Apache Lucene项目的一部分，包括网页抓取、索引、查询等功能，但随着抓取网页数量的增加，遇到了严重的可扩展性问题——如何解决数十亿网页的存储和索引问题。<br>这个问题的解决方案源于Google的三大论文 ：GFS ，BigTable和MapReduce。受此启发的Doug Cutting（Hadoop之父）等人用业余时间实现了DFS和MapReduce机制。2006年2月从Nutch被分离出来，成为一套完整独立的软件，起名为Hadoop。</p>
-<p>Hadoop的成长过程经历了：Lucene–&gt;Nutch—&gt;Hadoop</p>
-<p>三篇论文的核心思想逐步演变，最终：</p>
-<p>GFS—-&gt;HDFS<br>Google MapReduce—-&gt;Hadoop MapReduce<br>BigTable—-&gt;HBase</p>
-<h2 id="Hadoop版本与架构核心"><a href="#Hadoop版本与架构核心" class="headerlink" title="Hadoop版本与架构核心"></a>Hadoop版本与架构核心</h2><p>Apache开源社区版本，现已到3.x </p>
-<p>Hadoop1.0版本两个核心：HDFS+MapReduce</p>
-<p>Hadoop2.0版本，引入了Yarn。核心：HDFS+Yarn+Mapreduce</p>
-<p>​    Yarn是资源调度框架。能够细粒度的管理和调度任务。此外，还能够支持其他的计算框架，比如spark等。</p>
-<p><img src="/2019/08/24/Hadoop开篇/1775767-20190824015110535-1305780494-20190824134434478.png" alt="img"></p>
-<p>Hadoop3.0版本，未引入新核心，在原核心上，升级了很多东西。具体参见官网</p>
-<h4 id="Hadoop的核心组件："><a href="#Hadoop的核心组件：" class="headerlink" title="Hadoop的核心组件："></a>Hadoop的核心组件：</h4><p>　　1）<strong>Hadoop Common</strong>：支持其他Hadoop模块的常用工具。</p>
-<p>　　2)  <strong>Hadoop分布式文件系统（HDFS™）</strong>：一种分布式文件系统，可提供对应用程序数据的高吞吐量访问。</p>
-<p>　　3)  <strong>Hadoop YARN</strong>：作业调度和集群资源管理的框架。</p>
-<p>　　<strong>4)  Hadoop MapReduce</strong>：一种用于并行处理大型数据集的基于YARN的系统。</p>
-<p>　　大数据的处理主要就是<strong>存储</strong>和<strong>计算</strong>。</p>
-<p>如果说安装hadoop集群，其实就是安装了两个东西： 一个操作系统YARN 和 一个文件系统HDFS。其实MapReduce就是运行在YARN之上的应用。</p>
-<p>操作系统 　　文件系统 　　应用程序<br>win7 　　　　NTFS　　　  QQ，WeChat<br>YARN 　　　 HDFS 　　    MapReduce</p>
-<h2 id="Hadoop理念"><a href="#Hadoop理念" class="headerlink" title="Hadoop理念"></a>Hadoop理念</h2><p>Hadoop可运行于一般的商用服务器上，具有高容错、高可靠性、高扩展性等特点</p>
-<p>特别适合写一次，读多次的场景</p>
-<p> 适合场景</p>
-<ul>
-<li>大规模数据</li>
-<li>流式数据（写一次，读多次）</li>
-<li>商用硬件（一般硬件）</li>
-</ul>
-<p>不适合场景</p>
-<ul>
-<li>低延时的数据访问</li>
-<li>大量的小文件</li>
-<li>频繁修改文件</li>
-</ul>
-<h2 id="PS"><a href="#PS" class="headerlink" title="PS"></a>PS</h2><p>Hadoop起源的三个google论文   中文版</p>
-<p><a href="http://blog.bizcloudsoft.com/wp-content/uploads/Google-File-System%E4%B8%AD%E6%96%87%E7%89%88_1.0.pdf" target="_blank" rel="noopener">GFS</a>  Google的分布式文件系统Google File System<br><a href="http://blog.bizcloudsoft.com/wp-content/uploads/Google-Bigtable%E4%B8%AD%E6%96%87%E7%89%88_1.0.pdf" target="_blank" rel="noopener">BigTable</a>  一个大型的分布式数据库<br><a href="http://blog.bizcloudsoft.com/wp-content/uploads/Google-MapReduce%E4%B8%AD%E6%96%87%E7%89%88_1.0.pdf" target="_blank" rel="noopener">MapReduce</a> Google的MapReduce开源分布式并行计算框架</p>
+<p>首先，再回顾一下HDFS的架构图</p>
+<p><img src="/2019/09/08/Hadoop系列（五）Hadoop三大核心之HDFS-读写流程/image-20190908154045344.png" alt="image-20190908154045344"></p>
+<h2 id="HDFS写数据流程"><a href="#HDFS写数据流程" class="headerlink" title="HDFS写数据流程"></a>HDFS写数据流程</h2><p><img src="/2019/09/08/Hadoop系列（五）Hadoop三大核心之HDFS-读写流程/image-20190908154424852.png" alt="image-20190908154424852"></p>
+<ol>
+<li>客户端发送请求，调用DistributedFileSystem API的create方法去请求namenode，并告诉namenode上传文件的文件名、文件大小、文件拥有者。</li>
+<li>namenode根据以上信息算出文件需要切成多少块block，以及block要存放在哪个datanode上，并将这些信息返回给客户端。</li>
+<li>客户端调用FSDataInputStream API的write方法首先将其中一个block写在datanode上。</li>
+<li>每一个block多个副本（默认3个），由已经上传了block的datanode产生新的线程，按照放置副本规则往其它datanode写副本。（并不是由客户端分别往3个datanode上写3份，这样的优势就是快。）</li>
+<li>写完后返回给客户端一个信息，然后客户端在将信息反馈给namenode。更新元数据。</li>
+</ol>
+<h2 id="HDFS读流程"><a href="#HDFS读流程" class="headerlink" title="HDFS读流程"></a>HDFS读流程</h2><p><img src="/2019/09/08/Hadoop系列（五）Hadoop三大核心之HDFS-读写流程/image-20190908155152510.png" alt="image-20190908155152510"></p>
+<ol>
+<li>客户端通过调用FileSystem对象中的open()方法来读取需要的数据</li>
+<li>DistributedFileSystem会通过RPC协议调用NameNode来查找文件块所在的位置</li>
+</ol>
+<blockquote>
+<p><strong>NameNode只会返回所调用文件中开始的几个块而不是全部返回。对于每个返回的块，都包含块所在的DataNode的地址。随后，这些返回的DataNode会按照Hadoop集群的拓扑结构得出客户端的距离，然后再进行排序。如果客户端本身就是DataNode，那么它就从本地读取文件。</strong>其次，DistributedFileSystem会向客户端返回一个支持定位的输入流对象FSDataInputStream，用于给客户端读取数据。FSDataInputStream包含一个DFSInputStream对象，这个对象来管理DataNode和NameNode之间的IO</p>
+</blockquote>
+<ol start="3">
+<li><p>当以上步骤完成时，客户端便会在这个输入流上调用read()方法</p>
+</li>
+<li><p>DFSInputStream对象中包含文件开始部分数据块所在的DataNode地址，首先它会连接文件第一个块最近的DataNode，随后在数据流中重复调用read方法，直到这个块读完为止。</p>
+</li>
+<li><p>当第一个块读取完毕时，DFSInputStream会关闭连接，并查找存储下一个数据块距离客户端最近的DataNode，以上这些步骤对客户端来说都是透明的。</p>
+</li>
+<li><p>当完成所有块的读取时，客户端则会在DFSInputStream中调用close()方法。</p>
+</li>
+</ol>
 
       
     </div>
@@ -355,13 +341,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2019/08/24/Hadoop开篇/">Hadoop系列（一）开篇简介</a></p>
+        <p><span>本文标题:</span><a href="/2019/09/08/Hadoop系列（五）Hadoop三大核心之HDFS-读写流程/">Hadoop系列（五）Hadoop三大核心之HDFS 读写流程</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">ID喵</a></p>
-        <p><span>发布时间:</span>2019-08-24, 00:08:08</p>
-        <p><span>最后更新:</span>2019-08-25, 22:11:15</p>
+        <p><span>发布时间:</span>2019-09-08, 15:31:34</p>
+        <p><span>最后更新:</span>2019-09-08, 16:06:24</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2019/08/24/Hadoop开篇/" title="Hadoop系列（一）开篇简介">http://yoursite.com/2019/08/24/Hadoop开篇/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2019/08/24/Hadoop开篇/　　作者: ID喵" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2019/09/08/Hadoop系列（五）Hadoop三大核心之HDFS-读写流程/" title="Hadoop系列（五）Hadoop三大核心之HDFS 读写流程">http://yoursite.com/2019/09/08/Hadoop系列（五）Hadoop三大核心之HDFS-读写流程/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2019/09/08/Hadoop系列（五）Hadoop三大核心之HDFS-读写流程/　　作者: ID喵" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
@@ -373,12 +359,12 @@
 
     <nav id="article-nav">
         
-            <div id="article-nav-newer" class="article-nav-title">
-                <a href="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/">
-                    Hadoop系列（二）Hadoop三大核心之HDFS基础
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2019/09/05/序列化/">
+                    序列化
                 </a>
             </div>
-        
         
     </nav>
 
@@ -388,7 +374,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Hadoop是什么"><span class="toc-number">1.</span> <span class="toc-text">Hadoop是什么</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#总结"><span class="toc-number">1.0.1.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hadoop的起源"><span class="toc-number">2.</span> <span class="toc-text">Hadoop的起源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hadoop版本与架构核心"><span class="toc-number">3.</span> <span class="toc-text">Hadoop版本与架构核心</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Hadoop的核心组件："><span class="toc-number">3.0.1.</span> <span class="toc-text">Hadoop的核心组件：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hadoop理念"><span class="toc-number">4.</span> <span class="toc-text">Hadoop理念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PS"><span class="toc-number">5.</span> <span class="toc-text">PS</span></a></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#HDFS写数据流程"><span class="toc-number">1.</span> <span class="toc-text">HDFS写数据流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HDFS读流程"><span class="toc-number">2.</span> <span class="toc-text">HDFS读流程</span></a></li></ol>
         
     </div>
     <style>
@@ -424,7 +410,7 @@
         </div>
         <script>
             window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"Hadoop系列（一）开篇简介　| ID喵　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+                "common":{"bdSnsKey":{},"bdText":"Hadoop系列（五）Hadoop三大核心之HDFS 读写流程　| ID喵　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
         </script>
     
 
@@ -444,15 +430,15 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/" title="上一篇: Hadoop系列（二）Hadoop三大核心之HDFS基础">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+            <a href="/2019/09/05/序列化/" title="下一篇: 序列化">
+                <i class="fa fa-angle-right"></i>
+            </a>
         
     </div>
 

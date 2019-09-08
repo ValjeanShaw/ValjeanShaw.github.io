@@ -255,6 +255,101 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-Hadoop系列（五）Hadoop三大核心之HDFS-读写流程" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2019/09/08/Hadoop系列（五）Hadoop三大核心之HDFS-读写流程/" class="article-date">
+      <time datetime="2019-09-08T07:31:34.000Z" itemprop="datePublished">2019-09-08</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/09/08/Hadoop系列（五）Hadoop三大核心之HDFS-读写流程/">Hadoop系列（五）Hadoop三大核心之HDFS 读写流程</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <blockquote>
+<p>喵了个喵，我又遇到瓶颈了</p>
+</blockquote>
+<p>[TOC]</p>
+<p>首先，再回顾一下HDFS的架构图</p>
+<p><img src="/2019/09/08/Hadoop系列（五）Hadoop三大核心之HDFS-读写流程/image-20190908154045344.png" alt="image-20190908154045344"></p>
+<h2 id="HDFS写数据流程"><a href="#HDFS写数据流程" class="headerlink" title="HDFS写数据流程"></a>HDFS写数据流程</h2><p><img src="/2019/09/08/Hadoop系列（五）Hadoop三大核心之HDFS-读写流程/image-20190908154424852.png" alt="image-20190908154424852"></p>
+<ol>
+<li>客户端发送请求，调用DistributedFileSystem API的create方法去请求namenode，并告诉namenode上传文件的文件名、文件大小、文件拥有者。</li>
+<li>namenode根据以上信息算出文件需要切成多少块block，以及block要存放在哪个datanode上，并将这些信息返回给客户端。</li>
+<li>客户端调用FSDataInputStream API的write方法首先将其中一个block写在datanode上。</li>
+<li>每一个block多个副本（默认3个），由已经上传了block的datanode产生新的线程，按照放置副本规则往其它datanode写副本。（并不是由客户端分别往3个datanode上写3份，这样的优势就是快。）</li>
+<li>写完后返回给客户端一个信息，然后客户端在将信息反馈给namenode。更新元数据。</li>
+</ol>
+<h2 id="HDFS读流程"><a href="#HDFS读流程" class="headerlink" title="HDFS读流程"></a>HDFS读流程</h2><p><img src="/2019/09/08/Hadoop系列（五）Hadoop三大核心之HDFS-读写流程/image-20190908155152510.png" alt="image-20190908155152510"></p>
+<ol>
+<li>客户端通过调用FileSystem对象中的open()方法来读取需要的数据</li>
+<li>DistributedFileSystem会通过RPC协议调用NameNode来查找文件块所在的位置</li>
+</ol>
+<blockquote>
+<p><strong>NameNode只会返回所调用文件中开始的几个块而不是全部返回。对于每个返回的块，都包含块所在的DataNode的地址。随后，这些返回的DataNode会按照Hadoop集群的拓扑结构得出客户端的距离，然后再进行排序。如果客户端本身就是DataNode，那么它就从本地读取文件。</strong>其次，DistributedFileSystem会向客户端返回一个支持定位的输入流对象FSDataInputStream，用于给客户端读取数据。FSDataInputStream包含一个DFSInputStream对象，这个对象来管理DataNode和NameNode之间的IO</p>
+</blockquote>
+<ol start="3">
+<li><p>当以上步骤完成时，客户端便会在这个输入流上调用read()方法</p>
+</li>
+<li><p>DFSInputStream对象中包含文件开始部分数据块所在的DataNode地址，首先它会连接文件第一个块最近的DataNode，随后在数据流中重复调用read方法，直到这个块读完为止。</p>
+</li>
+<li><p>当第一个块读取完毕时，DFSInputStream会关闭连接，并查找存储下一个数据块距离客户端最近的DataNode，以上这些步骤对客户端来说都是透明的。</p>
+</li>
+<li><p>当完成所有块的读取时，客户端则会在DFSInputStream中调用close()方法。</p>
+</li>
+</ol>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hadoop/">Hadoop</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-序列化" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
