@@ -180,7 +180,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hadoop/">Hadoop</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/concurrent/">concurrent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a></li></ul>
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hadoop/">Hadoop</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/concurrent/">concurrent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/分布式/">分布式</a></li></ul>
                     </div>
                 </section>
                 
@@ -254,6 +254,132 @@
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-分布式系列-一-分布式架构概念" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2019/09/09/分布式系列-一-分布式架构概念/" class="article-date">
+      <time datetime="2019-09-09T15:13:42.000Z" itemprop="datePublished">2019-09-09</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/09/09/分布式系列-一-分布式架构概念/">分布式系列 (一) 分布式架构概念</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <blockquote>
+<p>喵了个喵，我又遇到瓶颈了</p>
+</blockquote>
+<p>[TOC]</p>
+<h2 id="集中式系统架构与分布式系统架构"><a href="#集中式系统架构与分布式系统架构" class="headerlink" title="集中式系统架构与分布式系统架构"></a>集中式系统架构与分布式系统架构</h2><p>集中式系统：由卓越性能的大型主机单机组成的计算机系统，称为集中式系统。</p>
+<p>特点。单机运算能力强劲，部署结构简单。但是，拥有单点故障，且单机价格昂贵。</p>
+<p>分布式系统：一个硬件或者软件组件分布在不同的网络计算机上，彼此之间仅仅通过消息传递进行通信和协调的系统。</p>
+<p>特点：</p>
+<ol>
+<li>分布性。多台计算机在空间中任意分布，且分布情况随时变动。</li>
+<li>对等性。分布式系统中计算机硬件没有主从之分。</li>
+<li>并发性。并发的操作共享资源（分布式系统最大挑战之一）。</li>
+<li>缺乏全局时钟。分布式系统中时间的先后，缺乏全局时钟序列控制。</li>
+<li>故障总是发生。组成分布式系统的计算机，随时都有可能发生任何形式故障</li>
+</ol>
+<h2 id="分布式系统架构中的挑战"><a href="#分布式系统架构中的挑战" class="headerlink" title="分布式系统架构中的挑战"></a>分布式系统架构中的挑战</h2><h3 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h3><p>定义：一系列对系统中数据进行访问与更新的操作所组成的一个程序执行单元。狭义上的事务特指数据库事务。</p>
+<p>4大特性：ACID</p>
+<p>原子性 Atomicity    一致性 Consistency    隔离性Isolation    持久性Durability</p>
+<p>原子性指事务必须是一个原子的操作序列单元，只允许出现全部成功执行和全部不执行两个状态。</p>
+<p>一致性指事务执行的结果必须是使系统从一个一致性状态变为另一个一致性状态。比如数据库事务中，出现故障事务失败，但是数据写入了部分，此为不一致状态。</p>
+<p>隔离性指一个事务的执行不能被其它事务干扰。</p>
+<p>持久性指事务一旦提交，对系统的变更是永久性的。比如数据库事务操作完毕，数据持久到磁盘。</p>
+<h3 id="分布式事务和数据一致性"><a href="#分布式事务和数据一致性" class="headerlink" title="分布式事务和数据一致性"></a>分布式事务和数据一致性</h3><p>一个分布式事务可看作由多个分布式的操作序列组成，由于在分布式事务中，各个子事务的执行是分散的，因此要实现一种能够保证ACID特性的分布式事务处理系统格外复杂。</p>
+<p>举个典型的分布式事务场景：一个跨银行的转账操作涉及调用两个异地的银行服务，其中一个是本地银行提供的取款服务，另一个则是目标银行提供的存款服务，这两个服务本身是无状态并且相互独立的，共同构成了一个完整的分布式事物。如果从本地银行取款成功，但是因为某种原因存款服务失败了，那么就必须回滚到取款之前的状态，否则用户可能会发现自己的钱不翼而飞了。</p>
+<h4 id="CAP定理"><a href="#CAP定理" class="headerlink" title="CAP定理"></a>CAP定理</h4><p>一个经典的分布式系统理论。CAP理论：<strong>一个分布式系统不可能同时满足一致性（C：Consistency）、可用性（A：Availability）和分区容错性（P：Partition tolerance）这三个基本需求，最多只能同时满足其中两项。</strong></p>
+<p>C 一致性：一个系统在数据一致的状态下执行更新操作后，应该保证系统的数据仍然处于一致的状态</p>
+<p>A 可用性：系统提供的服务必须一致处于可用的状态，对于用户的每一个操作请求总是能够在<strong>有限时间</strong>内<strong>返回结果</strong></p>
+<p>P 分区容错性：分布式系统在遇到任何网络分区故障的时候，仍然需要能够对外满足一致性和可用性的服务，除非网络环境都发生故障</p>
+<table>
+<thead>
+<tr>
+<th align="left">选择</th>
+<th><strong>说    明</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">CA</td>
+<td>放弃分区容错性，加强一致性和可用性，其实就是传统的单机数据库的选择</td>
+</tr>
+<tr>
+<td align="left">AP</td>
+<td>放弃一致性（追求最终一致性），追求分区容错性和可用性，这是很多分布式系统设计时的选择，例如很多NoSQL系统就是如此</td>
+</tr>
+<tr>
+<td align="left">CP</td>
+<td>放弃可用性，追求一致性和分区容错性，基本不会选择，网络问题会直接让整个系统不可用</td>
+</tr>
+</tbody></table>
+<p>需要明确的一点是：对于一个分布式系统来说，分区容错性可以说是一个最基本的需求。因为既然是一个分布式系统，那么分布式系统中的组件必然需要部署在不同节点，因此会出现子网络，因此分区容错性成为了一个分布式系统必然要面对和解决的问题。因此系统设计师往往在一致性和可用性之间做平衡取舍。由此引发Base理论。</p>
+<h4 id="BASE理论"><a href="#BASE理论" class="headerlink" title="BASE理论"></a>BASE理论</h4><p>BASE是对CAP中一致性和可用性权衡的结果，核心思想是即使无法做到强一致性，但是每个应用都可以根据自身业务特点，采用适当的方式使系统达到最终一致性。</p>
+<p>BASE理论三要素：</p>
+<ol>
+<li>基本可用    Basically Available</li>
+<li>软状态    Soft state</li>
+<li>最终一致性    Eventually consistent</li>
+</ol>
+<p>三要素详细解释：</p>
+<p>#####基本可用</p>
+<p>分布式系统出现不可预知故障的时候，允许损失部分可用性</p>
+<p>例：集群中部分机器宕机，导致剩余机器压力过大，查询效率从0.5s降到了2s</p>
+<h5 id="弱状态"><a href="#弱状态" class="headerlink" title="弱状态"></a>弱状态</h5><p>允许系统中的数据存在中间状态，并认为该状态不影响系统的整体可用性，即允许系统在多个不同节点的数据副本存在数据延时。</p>
+<h5 id="最终一致性"><a href="#最终一致性" class="headerlink" title="最终一致性"></a>最终一致性</h5><p>最终一致性强调在系统的所有数据副本，在经过一段时间的同步后，最终能够达到一个一致的状态。</p>
+<p>总的来说。BASE 理论面向的是大型高可用可扩展的分布式系统，和传统事务的 ACID 是<strong>相反的</strong>，它完全不同于 ACID 的强一致性模型，而是<strong>通过牺牲强一致性</strong>来获得可用性，并允许数据在一段时间是不一致的。</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/分布式/">分布式</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/分布式/">分布式</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-Hadoop系列（五）Hadoop三大核心之HDFS-读写流程" class="article article-type-post" itemscope itemprop="blogPost">
   
