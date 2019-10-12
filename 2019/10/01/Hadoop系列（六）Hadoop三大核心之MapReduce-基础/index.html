@@ -15,18 +15,20 @@
 
 
 
-<meta name="description" content="喵了个喵，我又遇到瓶颈了  [TOC] MapReduce背景设想一个海量数据场景下的数据计算需求：  单机版：磁盘受限，内存受限，计算能力受限  分布式版： 1  数据存储的问题，hadoop 提供了 hdfs 解决了数据存储这个问题 2 运算逻辑至少要分为两个阶段，先并发计算（map），然后汇总（reduce）结果 3 这两个阶段的计算如何启动？如何协调？ 4 运算程序到底怎么执行？数据找程">
+<meta name="description" content="喵了个喵，我又遇到瓶颈了  [TOC] MapReduce背景　　在程序由单机版扩成分布式版时，会引入大量的复杂工作。为了提高开发效率，可以将分布式程序中的公共功能封装成框架，让开发人员可以将精力集中于业务逻辑。Hadoop 当中的 MapReduce 就是这样的一个分布式程序运算框架。 MapReduce是什么MapReduce是一个分布式运算程序的编程框架，是用户开发“基于 Hadoop 的">
 <meta name="keywords" content="Hadoop">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Hadoop系列（六）Hadoop三大核心之MapReduce 基础">
-<meta property="og:url" content="http://yoursite.com/2019/09/01/Hadoop系列（六）Hadoop三大核心之MapReduce-基础/index.html">
+<meta property="og:url" content="http://yoursite.com/2019/10/01/Hadoop系列（六）Hadoop三大核心之MapReduce-基础/index.html">
 <meta property="og:site_name" content="ID喵">
-<meta property="og:description" content="喵了个喵，我又遇到瓶颈了  [TOC] MapReduce背景设想一个海量数据场景下的数据计算需求：  单机版：磁盘受限，内存受限，计算能力受限  分布式版： 1  数据存储的问题，hadoop 提供了 hdfs 解决了数据存储这个问题 2 运算逻辑至少要分为两个阶段，先并发计算（map），然后汇总（reduce）结果 3 这两个阶段的计算如何启动？如何协调？ 4 运算程序到底怎么执行？数据找程">
+<meta property="og:description" content="喵了个喵，我又遇到瓶颈了  [TOC] MapReduce背景　　在程序由单机版扩成分布式版时，会引入大量的复杂工作。为了提高开发效率，可以将分布式程序中的公共功能封装成框架，让开发人员可以将精力集中于业务逻辑。Hadoop 当中的 MapReduce 就是这样的一个分布式程序运算框架。 MapReduce是什么MapReduce是一个分布式运算程序的编程框架，是用户开发“基于 Hadoop 的">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-09-19T06:10:50.222Z">
+<meta property="og:image" content="http://yoursite.com/2019/10/01/Hadoop系列（六）Hadoop三大核心之MapReduce-基础/image-20191012085953019.png">
+<meta property="og:updated_time" content="2019-10-12T01:28:44.553Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hadoop系列（六）Hadoop三大核心之MapReduce 基础">
-<meta name="twitter:description" content="喵了个喵，我又遇到瓶颈了  [TOC] MapReduce背景设想一个海量数据场景下的数据计算需求：  单机版：磁盘受限，内存受限，计算能力受限  分布式版： 1  数据存储的问题，hadoop 提供了 hdfs 解决了数据存储这个问题 2 运算逻辑至少要分为两个阶段，先并发计算（map），然后汇总（reduce）结果 3 这两个阶段的计算如何启动？如何协调？ 4 运算程序到底怎么执行？数据找程">
+<meta name="twitter:description" content="喵了个喵，我又遇到瓶颈了  [TOC] MapReduce背景　　在程序由单机版扩成分布式版时，会引入大量的复杂工作。为了提高开发效率，可以将分布式程序中的公共功能封装成框架，让开发人员可以将精力集中于业务逻辑。Hadoop 当中的 MapReduce 就是这样的一个分布式程序运算框架。 MapReduce是什么MapReduce是一个分布式运算程序的编程框架，是用户开发“基于 Hadoop 的">
+<meta name="twitter:image" content="http://yoursite.com/2019/10/01/Hadoop系列（六）Hadoop三大核心之MapReduce-基础/image-20191012085953019.png">
 
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
@@ -256,8 +258,8 @@
       <div class="body-wrap"><article id="post-Hadoop系列（六）Hadoop三大核心之MapReduce-基础" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2019/09/01/Hadoop系列（六）Hadoop三大核心之MapReduce-基础/" class="article-date">
-      <time datetime="2019-09-01T08:51:48.000Z" itemprop="datePublished">2019-09-01</time>
+      <a href="/2019/10/01/Hadoop系列（六）Hadoop三大核心之MapReduce-基础/" class="article-date">
+      <time datetime="2019-10-01T08:51:48.000Z" itemprop="datePublished">2019-10-01</time>
 </a>
 
 
@@ -301,32 +303,22 @@
 <p>喵了个喵，我又遇到瓶颈了</p>
 </blockquote>
 <p>[TOC]</p>
-<h2 id="MapReduce背景"><a href="#MapReduce背景" class="headerlink" title="MapReduce背景"></a>MapReduce背景</h2><p>设想一个海量数据场景下的数据计算需求：</p>
-<ul>
-<li><p>单机版：磁盘受限，内存受限，计算能力受限</p>
-</li>
-<li><p>分布式版：</p>
-<p>1  数据存储的问题，hadoop 提供了 hdfs 解决了数据存储这个问题</p>
-<p>2 运算逻辑至少要分为两个阶段，先并发计算（map），然后汇总（reduce）结果</p>
-<p>3 这两个阶段的计算如何启动？如何协调？</p>
-<p>4 运算程序到底怎么执行？数据找程序还是程序找数据？</p>
-<p>5如何分配两个阶段的多个运算任务？</p>
-<p>6如何管理任务的执行过程中间状态，如何容错？</p>
-<p>7如何监控？</p>
-<p>8出错如何处理？抛异常？重试？</p>
-</li>
-</ul>
-<p>　　可见在程序由单机版扩成分布式版时，会引入大量的复杂工作。为了提高开发效率，可以将分布式程序中的公共功能封装成框架，让开发人员可以将精力集中于业务逻辑。Hadoop 当中的 MapReduce 就是这样的一个分布式程序运算框架。</p>
-<h2 id="MapReduce是什么"><a href="#MapReduce是什么" class="headerlink" title="MapReduce是什么"></a>MapReduce是什么</h2><p><strong>MapReduce是一个分布式运算程序的编程框架，是用户开发“基于 Hadoop 的数据分析应用” 的核心框架。其核心功能是将用户编写的业务逻辑代码和自带默认组件整合成一个完整的分布式运算程序，并发运行在一个 Hadoop 集群上。</strong></p>
-<p>MapReduce可以分成Map和Reduce两部分理解。</p>
-<ol>
-<li><p>Map：映射过程，把一组数据按照某种Map函数映射成新的数据。</p>
-</li>
-<li><p>Reduce：归约过程，把若干组映射结果进行汇总并输出。</p>
-</li>
-</ol>
-<p>基于MapReduce写出来的应用程序能够运行在由上千个商用机器组成的大型集群上，并以一种可靠容错的方式并行处理上T级别的数据集。一个Map/Reduce <em>作业（job）</em> 通常会把输入的数据集切分为若干独立的数据块，由 <em>map任务（task）</em>以完全并行的方式处理它们。框架会对map的输出先进行排序， 然后把结果输入给<em>reduce任务</em>。通常作业的输入和输出都会被存储在文件系统中。 整个框架负责任务的调度和监控，以及重新执行已经失败的任务。</p>
-<h2 id="MapReduce的结构"><a href="#MapReduce的结构" class="headerlink" title="MapReduce的结构"></a>MapReduce的结构</h2>
+<h2 id="MapReduce背景"><a href="#MapReduce背景" class="headerlink" title="MapReduce背景"></a>MapReduce背景</h2><p>　　在程序由单机版扩成分布式版时，会引入大量的复杂工作。为了提高开发效率，可以将分布式程序中的公共功能封装成框架，让开发人员可以将精力集中于业务逻辑。Hadoop 当中的 MapReduce 就是这样的一个分布式程序运算框架。</p>
+<h2 id="MapReduce是什么"><a href="#MapReduce是什么" class="headerlink" title="MapReduce是什么"></a>MapReduce是什么</h2><p><strong>MapReduce是一个分布式运算程序的编程框架，是用户开发“基于 Hadoop 的数据分析应用” 的核心框架。</strong></p>
+<p><strong>核心功能是将用户编写的业务逻辑代码和自带默认组件整合成一个完整的分布式运算程序，并发运行在一个 Hadoop 集群上。</strong></p>
+<p><strong>MapReduce将整个并行计算过程抽象到两个函数：</strong></p>
+<p>　　Map（映射）：对一些独立元素组成的列表的每一个元素进行制定的操作，可以高度并行。</p>
+<p>　　Reduce（归约）：归约过程，把若干组映射结果进行汇总并输出。</p>
+<p><strong>一个简单的MapReduce程序只需要指定Map()、reduce()、input和output，剩下的事情由框架完成。</strong></p>
+<p>基于MapReduce写出来的应用程序能够运行在大型集群上，并以一种可靠容错的方式并行处理上T级别的数据集。一个Map/Reduce 作业<em>通常会把输入的数据集切分为若干独立的数据块，由 *map任务（task）</em>以完全并行的方式处理它们。框架会对map的输出先进行排序， 然后把结果输入给<em>reduce任务</em>。通常作业的输入和输出都会被存储在文件系统中。 整个框架负责任务的调度和监控，以及重新执行已经失败的任务。</p>
+<h2 id="MapReduce的架构简单介绍"><a href="#MapReduce的架构简单介绍" class="headerlink" title="MapReduce的架构简单介绍"></a>MapReduce的架构简单介绍</h2><p><img src="/2019/10/01/Hadoop系列（六）Hadoop三大核心之MapReduce-基础/image-20191012085953019.png" alt="image-20191012085953019"></p>
+<p>Input：输入文件的存储位置。可以是hdfs文件位置，也可以是本地文件位置</p>
+<p>Map阶段:自己编写映射逻辑</p>
+<p>Shuffle阶段:是我们不需要编写的模块，但却是十分关键的模块。Shuffle 阶段需要从所有 map主机上把相同的 key 的 key value对组合在一起，传给 reduce主机, 作为输入进入 reduce函数里。</p>
+<p>Reduce阶段:自己编写合并逻辑</p>
+<p>Final result: 最终结果存储在hdfs</p>
+<p>MapReduce 更深层次分析后续讲解</p>
+
       
     </div>
     
@@ -334,13 +326,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2019/09/01/Hadoop系列（六）Hadoop三大核心之MapReduce-基础/">Hadoop系列（六）Hadoop三大核心之MapReduce 基础</a></p>
+        <p><span>本文标题:</span><a href="/2019/10/01/Hadoop系列（六）Hadoop三大核心之MapReduce-基础/">Hadoop系列（六）Hadoop三大核心之MapReduce 基础</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">ID喵</a></p>
-        <p><span>发布时间:</span>2019-09-01, 16:51:48</p>
-        <p><span>最后更新:</span>2019-09-19, 14:10:50</p>
+        <p><span>发布时间:</span>2019-10-01, 16:51:48</p>
+        <p><span>最后更新:</span>2019-10-12, 09:28:44</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2019/09/01/Hadoop系列（六）Hadoop三大核心之MapReduce-基础/" title="Hadoop系列（六）Hadoop三大核心之MapReduce 基础">http://yoursite.com/2019/09/01/Hadoop系列（六）Hadoop三大核心之MapReduce-基础/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2019/09/01/Hadoop系列（六）Hadoop三大核心之MapReduce-基础/　　作者: ID喵" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2019/10/01/Hadoop系列（六）Hadoop三大核心之MapReduce-基础/" title="Hadoop系列（六）Hadoop三大核心之MapReduce 基础">http://yoursite.com/2019/10/01/Hadoop系列（六）Hadoop三大核心之MapReduce-基础/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2019/10/01/Hadoop系列（六）Hadoop三大核心之MapReduce-基础/　　作者: ID喵" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
@@ -352,16 +344,10 @@
 
     <nav id="article-nav">
         
-            <div id="article-nav-newer" class="article-nav-title">
-                <a href="/2019/09/02/进程，线程与多核，多cpu之间的关系/">
-                    进程，线程与多核，多cpu之间的关系
-                </a>
-            </div>
-        
         
             <div id="article-nav-older" class="article-nav-title">
-                <a href="/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/">
-                    Hadoop系列（四）Hadoop三大核心之HDFS Java API
+                <a href="/2019/09/19/分布式系列-二-一致性协议 2PC和3PC/">
+                    分布式系列 (二) 一致性协议 2PC和3PC
                 </a>
             </div>
         
@@ -373,7 +359,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MapReduce背景"><span class="toc-number">1.</span> <span class="toc-text">MapReduce背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MapReduce是什么"><span class="toc-number">2.</span> <span class="toc-text">MapReduce是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MapReduce的结构"><span class="toc-number">3.</span> <span class="toc-text">MapReduce的结构</span></a></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MapReduce背景"><span class="toc-number">1.</span> <span class="toc-text">MapReduce背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MapReduce是什么"><span class="toc-number">2.</span> <span class="toc-text">MapReduce是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MapReduce的架构简单介绍"><span class="toc-number">3.</span> <span class="toc-text">MapReduce的架构简单介绍</span></a></li></ol>
         
     </div>
     <style>
@@ -429,21 +415,19 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2019/09/02/进程，线程与多核，多cpu之间的关系/" title="上一篇: 进程，线程与多核，多cpu之间的关系">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/" title="下一篇: Hadoop系列（四）Hadoop三大核心之HDFS Java API">
+            <a href="/2019/09/19/分布式系列-二-一致性协议 2PC和3PC/" title="下一篇: 分布式系列 (二) 一致性协议 2PC和3PC">
                 <i class="fa fa-angle-right"></i>
             </a>
         
     </div>
 
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/09/19/分布式系列-二-一致性协议 2PC和3PC/">分布式系列 (二) 一致性协议 2PC和3PC</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/09/分布式系列-一-分布式架构概念/">分布式系列 (一) 分布式架构概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/08/Hadoop系列（五）Hadoop三大核心之HDFS-读写流程/">Hadoop系列（五）Hadoop三大核心之HDFS 读写流程</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/05/序列化/">序列化</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/02/进程，线程与多核，多cpu之间的关系/">进程，线程与多核，多cpu之间的关系</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/01/Hadoop系列（六）Hadoop三大核心之MapReduce-基础/">Hadoop系列（六）Hadoop三大核心之MapReduce 基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/">Hadoop系列（四）Hadoop三大核心之HDFS Java API</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/">Hadoop系列（三）Hadoop三大核心之HDFS shell常用命令</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/">Hadoop系列（二）Hadoop三大核心之HDFS基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/24/Hadoop开篇/">Hadoop系列（一）开篇简介</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/10/01/Hadoop系列（六）Hadoop三大核心之MapReduce-基础/">Hadoop系列（六）Hadoop三大核心之MapReduce 基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/19/分布式系列-二-一致性协议 2PC和3PC/">分布式系列 (二) 一致性协议 2PC和3PC</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/09/分布式系列-一-分布式架构概念/">分布式系列 (一) 分布式架构概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/08/Hadoop系列（五）Hadoop三大核心之HDFS-读写流程/">Hadoop系列（五）Hadoop三大核心之HDFS 读写流程</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/05/序列化/">序列化</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/02/进程，线程与多核，多cpu之间的关系/">进程，线程与多核，多cpu之间的关系</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/">Hadoop系列（四）Hadoop三大核心之HDFS Java API</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/">Hadoop系列（三）Hadoop三大核心之HDFS shell常用命令</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/">Hadoop系列（二）Hadoop三大核心之HDFS基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/24/Hadoop开篇/">Hadoop系列（一）开篇简介</a></li></ul>
 
 
 
