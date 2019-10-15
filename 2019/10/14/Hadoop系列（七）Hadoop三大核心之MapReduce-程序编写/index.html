@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<meta name="author" content="ID喵">
+
+
+
+<meta name="description" content="喵了个喵，我又遇到瓶颈了  [TOC] 接下来以一个简单的WordCount为例子，介绍Java版本的MapReduce的程序编写。 mapreduce程序主要分三部分：1.map部分，2.reduce部分，3.提交部分。 1. 准备部分hadoop中，针对数据类型自成一体，与java的数据类型对应。封装在hadoop.io包中，主要分为基本类型和其它类型。  基本数据类型     数据类型 h">
+<meta name="keywords" content="Hadoop">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写">
+<meta property="og:url" content="http://yoursite.com/2019/10/14/Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写/index.html">
+<meta property="og:site_name" content="ID喵">
+<meta property="og:description" content="喵了个喵，我又遇到瓶颈了  [TOC] 接下来以一个简单的WordCount为例子，介绍Java版本的MapReduce的程序编写。 mapreduce程序主要分三部分：1.map部分，2.reduce部分，3.提交部分。 1. 准备部分hadoop中，针对数据类型自成一体，与java的数据类型对应。封装在hadoop.io包中，主要分为基本类型和其它类型。  基本数据类型     数据类型 h">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-10-15T01:50:50.113Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写">
+<meta name="twitter:description" content="喵了个喵，我又遇到瓶颈了  [TOC] 接下来以一个简单的WordCount为例子，介绍Java版本的MapReduce的程序编写。 mapreduce程序主要分三部分：1.map部分，2.reduce部分，3.提交部分。 1. 准备部分hadoop中，针对数据类型自成一体，与java的数据类型对应。封装在hadoop.io包中，主要分为基本类型和其它类型。  基本数据类型     数据类型 h">
+
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="ID喵" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/favicon.png">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写 | ID喵</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: 
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head></html>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/langya.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">ID喵</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">喵了个喵，我又遇到瓶颈了...</p>
+        
+
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/archives/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="/xiaoran737@163.com" title="Email"></a>
+                            
+                                <a class="fa GitHub" href="https://github.com/ValjeanShaw" title="GitHub"></a>
+                            
+                                <a class="fa 博客园" href="https://www.cnblogs.com/valjeanshaw/" title="博客园"></a>
+                            
+                                <a class="fa 掘金" href="https://juejin.im/user/5d5bd7106fb9a06b0c08695f" title="掘金"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hadoop/">Hadoop</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/concurrent/">concurrent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/分布式/">分布式</a></li></ul>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://hexo.io">Hexo</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://pages.github.com/">GitHub</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://moxfive.xyz/">MOxFIVE</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">ID喵</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/langya.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">ID喵</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">喵了个喵，我又遇到瓶颈了...</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/archives/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="/xiaoran737@163.com" title="Email"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="https://github.com/ValjeanShaw" title="GitHub"></a>
+                            
+                                <a class="fa 博客园" target="_blank" href="https://www.cnblogs.com/valjeanshaw/" title="博客园"></a>
+                            
+                                <a class="fa 掘金" target="_blank" href="https://juejin.im/user/5d5bd7106fb9a06b0c08695f" title="掘金"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2019/10/14/Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写/" class="article-date">
+      <time datetime="2019-10-14T12:17:40.000Z" itemprop="datePublished">2019-10-14</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hadoop/">Hadoop</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <blockquote>
+<p>喵了个喵，我又遇到瓶颈了</p>
+</blockquote>
+<p>[TOC]</p>
+<p>接下来以一个简单的WordCount为例子，介绍Java版本的MapReduce的程序编写。</p>
+<p>mapreduce程序主要分三部分：1.map部分，2.reduce部分，3.提交部分。</p>
+<h3 id="1-准备部分"><a href="#1-准备部分" class="headerlink" title="1. 准备部分"></a>1. 准备部分</h3><p>hadoop中，针对数据类型自成一体，与java的数据类型对应。封装在hadoop.io包中，主要分为基本类型和其它类型。</p>
+<ul>
+<li>基本数据类型</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>数据类型</th>
+<th>hadoop数据类型</th>
+<th>Java数据类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>布尔</td>
+<td>BooleanWritable</td>
+<td>boolean</td>
+</tr>
+<tr>
+<td>整型</td>
+<td>IntWritable</td>
+<td>int</td>
+</tr>
+<tr>
+<td>长整型</td>
+<td>LongWritable</td>
+<td>long</td>
+</tr>
+<tr>
+<td>浮点型</td>
+<td>FloatWritable</td>
+<td>float</td>
+</tr>
+<tr>
+<td>双精浮点</td>
+<td>DoubleWritable</td>
+<td>double</td>
+</tr>
+<tr>
+<td>字节</td>
+<td>ByteWritable</td>
+<td>byte</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<ul>
+<li>其它类型</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>数据类型</th>
+<th>hadoop数据类型</th>
+<th>Java数据类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>字符串</td>
+<td>Text</td>
+<td>String</td>
+</tr>
+<tr>
+<td>数组</td>
+<td>ArrayWritable</td>
+<td>Array</td>
+</tr>
+<tr>
+<td>Map</td>
+<td>MapWritable</td>
+<td>Map</td>
+</tr>
+</tbody></table>
+<h3 id="2-jar包依赖"><a href="#2-jar包依赖" class="headerlink" title="2. jar包依赖"></a>2. jar包依赖</h3><p>创建一个maven工程，pom.xml文件中，添加以下依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.hadoop<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>hadoop-common<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.6.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.hadoop<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>hadoop-hdfs<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.6.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.hadoop<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>hadoop-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.6.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-Map部分"><a href="#3-Map部分" class="headerlink" title="3. Map部分"></a>3. Map部分</h3><p>映射部分，将数据逐条处理</p>
+<p>首先，需要继承Mapper&lt;KEYIN, VALUEIN, KEYOUT, VALUEOUT&gt;类</p>
+<p>四个泛型参数分别代表：输入key  输出value   输出key   输出value</p>
+<p>然后重写mapper的map方法</p>
+<figure class="highlight plain"><figcaption><span>key, VALUEIN value, Context context) throws IOException, InterruptedException```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">主体代码:</span><br><span class="line"></span><br><span class="line">```java</span><br><span class="line">public class WordCountMap extends Mapper&lt;LongWritable, Text, Text, IntWritable&gt; &#123;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     *  流程，输入key和value，map的结果写入到context中</span><br><span class="line">     */</span><br><span class="line">    @Override</span><br><span class="line">    public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException &#123;</span><br><span class="line">        //读取一行数据</span><br><span class="line">        String line = value.toString();</span><br><span class="line">        //因为英文字母是以“ ”为间隔的，因此使用“ ”分隔符将一行数据切成多个单词并存在数组中</span><br><span class="line">        String str[] = line.split(&quot; &quot;);</span><br><span class="line">        //循环迭代字符串，将一个单词变成&lt;key,value&gt;形式，及&lt;&quot;hello&quot;,1&gt;</span><br><span class="line">        for (String s : str) &#123;</span><br><span class="line">            context.write(new Text(s), new IntWritable(1));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-Reduce部分"><a href="#4-Reduce部分" class="headerlink" title="4.Reduce部分"></a>4.Reduce部分</h3><p>归并部分，将map处理和shuffle之后的数据进行归并。shuffle过程由hadoop控制</p>
+<p>Reducer&lt;KEYIN,VALUEIN,KEYOUT,VALUEOUT&gt;</p>
+<p>四个泛型参数分别代表：输入key  输出value   输出key   输出value</p>
+<p>然后重写reducer的reduce方法</p>
+<figure class="highlight plain"><figcaption><span>key, Iterable<valuein> values, Context context) throws IOException, InterruptedException```</valuein></span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">主体代码：</span><br><span class="line"></span><br><span class="line">```java</span><br><span class="line">public class WordCountReduce extends Reducer&lt;Text,IntWritable,Text, IntWritable&gt; &#123;</span><br><span class="line">    /**</span><br><span class="line">     *  流程，输入key和value，map的结果写入到context中</span><br><span class="line">     */</span><br><span class="line">    @Override</span><br><span class="line">    public void reduce(Text key, Iterable&lt;IntWritable&gt; values,Context context)throws IOException,InterruptedException&#123;</span><br><span class="line">        int count = 0;</span><br><span class="line"></span><br><span class="line">        for(IntWritable value: values) &#123;</span><br><span class="line">            count++;</span><br><span class="line">        &#125;</span><br><span class="line">        context.write(key,new IntWritable(count));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-提交部分"><a href="#5-提交部分" class="headerlink" title="5.提交部分"></a>5.提交部分</h3><p>mapreduce的入口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">    Configuration conf = <span class="keyword">new</span> Configuration();</span><br><span class="line">    <span class="comment">// 构造一个job对象来封装本mapreduce业务到所有信息</span></span><br><span class="line">    Job mrJob = Job.getInstance(conf);</span><br><span class="line">    <span class="comment">// 指定本job工作用到的jar包位置</span></span><br><span class="line">    mrJob.setJarByClass(WordCount.class);</span><br><span class="line">    <span class="comment">// 指定本job用到的mapper类</span></span><br><span class="line">    mrJob.setMapperClass(WordCountMap.class);</span><br><span class="line">    <span class="comment">// 指定本job用到的reducer类</span></span><br><span class="line">    mrJob.setReducerClass(WordCountReduce.class);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 指定mapper输出的kv类型</span></span><br><span class="line">    mrJob.setMapOutputKeyClass(Text.class);</span><br><span class="line">    mrJob.setMapOutputValueClass(IntWritable.class);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 指定reducer输出到kv数据类型（setOutputKeyClass 会对mapper和reducer都起作用,如果上面mapper不设置的话）</span></span><br><span class="line">    mrJob.setOutputKeyClass(Text.class);</span><br><span class="line">    mrJob.setOutputValueClass(IntWritable.class);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    FileInputFormat.addInputPath(mrJob,<span class="keyword">new</span> Path(args[<span class="number">0</span>]));</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置mapreduce程序的输出路径，MapReduce的结果都是输入到文件中</span></span><br><span class="line">    FileOutputFormat.setOutputPath(mrJob,<span class="keyword">new</span> Path(args[<span class="number">1</span>]));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 最后提交任务</span></span><br><span class="line">    <span class="keyword">boolean</span> waitForCompletion = mrJob.waitForCompletion(<span class="keyword">true</span>);</span><br><span class="line">    System.exit(waitForCompletion ? <span class="number">0</span> : <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-打包提交"><a href="#6-打包提交" class="headerlink" title="6.打包提交"></a>6.打包提交</h3><p>将程序打成jar包，提交到hadoop集群中，然后使用命令行进行任务提交</p>
+<p>对于输入输出路径，均可接受本地路径和hdfs路径。</p>
+<p>本地路径前缀：file://</p>
+<p>hdfs路径前缀：hdfs://</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/hadoop-3.1.2/bin/hadoop jar my_mapreduce-1.0-SNAPSHOT.jar com.breakthrough.wordcount.WordCount file:///home/hadoop/english.txt file:///home/hadoop/output</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2019/10/14/Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写/">Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">ID喵</a></p>
+        <p><span>发布时间:</span>2019-10-14, 20:17:40</p>
+        <p><span>最后更新:</span>2019-10-15, 09:50:50</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2019/10/14/Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写/" title="Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写">http://yoursite.com/2019/10/14/Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2019/10/14/Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写/　　作者: ID喵" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2019/10/01/Hadoop系列（六）Hadoop三大核心之MapReduce-基础/">
+                    Hadoop系列（六）Hadoop三大核心之MapReduce 基础
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-准备部分"><span class="toc-number">1.</span> <span class="toc-text">1. 准备部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-jar包依赖"><span class="toc-number">2.</span> <span class="toc-text">2. jar包依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Map部分"><span class="toc-number">3.</span> <span class="toc-text">3. Map部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-Reduce部分"><span class="toc-number">4.</span> <span class="toc-text">4.Reduce部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-提交部分"><span class="toc-number">5.</span> <span class="toc-text">5.提交部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-打包提交"><span class="toc-number">6.</span> <span class="toc-text">6.打包提交</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写　| ID喵　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2019/10/01/Hadoop系列（六）Hadoop三大核心之MapReduce-基础/" title="下一篇: Hadoop系列（六）Hadoop三大核心之MapReduce 基础">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/10/14/Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写/">Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/10/01/Hadoop系列（六）Hadoop三大核心之MapReduce-基础/">Hadoop系列（六）Hadoop三大核心之MapReduce 基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/19/分布式系列-二-一致性协议 2PC和3PC/">分布式系列 (二) 一致性协议 2PC和3PC</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/09/分布式系列-一-分布式架构概念/">分布式系列 (一) 分布式架构概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/08/Hadoop系列（五）Hadoop三大核心之HDFS-读写流程/">Hadoop系列（五）Hadoop三大核心之HDFS 读写流程</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/05/序列化/">序列化</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/02/进程，线程与多核，多cpu之间的关系/">进程，线程与多核，多cpu之间的关系</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/">Hadoop系列（四）Hadoop三大核心之HDFS Java API</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/">Hadoop系列（三）Hadoop三大核心之HDFS shell常用命令</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/">Hadoop系列（二）Hadoop三大核心之HDFS基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/24/Hadoop开篇/">Hadoop系列（一）开篇简介</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2016-2019 ID喵
+            </div>
+            <div class="footer-right">
+                
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 5;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>

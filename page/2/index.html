@@ -14,10 +14,13 @@
 <meta name="author" content="ID喵">
 
 
+    
+    
+
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="ID喵">
-<meta property="og:url" content="http://yoursite.com/archives/2019/10/index.html">
+<meta property="og:url" content="http://yoursite.com/page/2/index.html">
 <meta property="og:site_name" content="ID喵">
 <meta property="og:locale" content="zh-Hans">
 <meta name="twitter:card" content="summary">
@@ -49,11 +52,13 @@
 <link rel="stylesheet" href="/css/style.css">
 
 
+    <style> .article { opacity: 0;} </style>
+
 
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>Archives: 2019/10 | ID喵</title>
+<title>ID喵</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -62,9 +67,9 @@
     var yiliaConfig = {
         fancybox: true,
         animate: true,
-        isHome: false,
+        isHome: true,
         isPost: false,
-        isArchive: true,
+        isArchive: false,
         isTag: false,
         isCategory: false,
         fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
@@ -250,95 +255,122 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-Hadoop开篇" class="article article-type-post" itemscope itemprop="blogPost">
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-          <div class="article-meta">
-              <a href="/2019/10/14/Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写/" class="archive-article-date">
-      <time datetime="2019-10-14T12:17:40.000Z" itemprop="datePublished">10-14</time>
+    <div class="article-meta">
+      <a href="/2019/08/24/Hadoop开篇/" class="article-date">
+      <time datetime="2019-08-23T16:08:08.000Z" itemprop="datePublished">2019-08-24</time>
 </a>
 
 
-        </div>
-         
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
   
     <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/10/14/Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写/">Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写</a>
+      <a class="article-title" href="/2019/08/24/Hadoop开篇/">Hadoop系列（一）开篇简介</a>
     </h1>
   
 
-        <div class="article-info info-on-archive">
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
           
+        <blockquote>
+<p>喵了个喵，我又遇到瓶颈了</p>
+</blockquote>
+<p>[TOC]</p>
+<p>谁说大象不会跳舞</p>
+<h2 id="Hadoop是什么"><a href="#Hadoop是什么" class="headerlink" title="Hadoop是什么"></a>Hadoop是什么</h2><p>Hadoop的官网：<a href="http://hadoop.apache.org/" target="_blank" rel="noopener">http://hadoop.apache.org/</a></p>
+<p>官网定义：The Apache Hadoop software library is a framework that allows for the distributed processing of large data sets across clusters of computers using simple programming models.</p>
+<p>Hadoop： 适合大数据的分布式存储和计算平台</p>
+<p>现为Apache顶级开源项目，Hadoop不是指具体一个框架或者组件，它是Apache软件基金会下用Java语言开发的一个开源分布式计算平台。实现在大量计算机组成的集群中对海量数据进行分布式计算，适合大数据的分布式存储和计算平台。</p>
+<p>举个简单例子：假如说你有一个篮子水果，你想知道苹果和梨的数量是多少，那么只要一个一个数就可以知道有多少了。如果你有一个集装箱水果，这时候就需要很多人同时帮你数了，这相当于多进程或多线程。如果你很多个集装箱的水果，这时就需要分布式计算了，也就是Hadoop。Hadoopd之所谓会诞生，主要是由于进入到大数据时代，计算机需要处理的数据量太过庞大。这时就需要将这些庞大数据切割分配到N台计算机进行处理。当大量信息被分配到不同计算机进行处理时，要确保最终得到的结果正确就需要对这些分布处理的信息进行管理，hadoop就是这样的一套解决方案。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>1、Hadoop是Apache旗下的一套开源适合大数据的分布式存储和计算平台平台</p>
+<p>2、Hadoop提供的功能：利用服务器集群，根据户自定义业逻辑对海量数进行分布式处理</p>
+<p>hadoop的概念：</p>
+<p>　　狭义上： 就是apache的一个顶级项目：apahce hadoop</p>
+<p>　　广义上: 就是指以hadoop为核心的整个大数据处理体系</p>
+<h2 id="Hadoop的起源"><a href="#Hadoop的起源" class="headerlink" title="Hadoop的起源"></a>Hadoop的起源</h2><p>HADOOP最早起源于Nutch。Nutch的设计目标是构建一个大型的全网搜索引擎，为Apache Lucene项目的一部分，包括网页抓取、索引、查询等功能，但随着抓取网页数量的增加，遇到了严重的可扩展性问题——如何解决数十亿网页的存储和索引问题。<br>这个问题的解决方案源于Google的三大论文 ：GFS ，BigTable和MapReduce。受此启发的Doug Cutting（Hadoop之父）等人用业余时间实现了DFS和MapReduce机制。2006年2月从Nutch被分离出来，成为一套完整独立的软件，起名为Hadoop。</p>
+<p>Hadoop的成长过程经历了：Lucene–&gt;Nutch—&gt;Hadoop</p>
+<p>三篇论文的核心思想逐步演变，最终：</p>
+<p>GFS—-&gt;HDFS<br>Google MapReduce—-&gt;Hadoop MapReduce<br>BigTable—-&gt;HBase</p>
+<h2 id="Hadoop版本与架构核心"><a href="#Hadoop版本与架构核心" class="headerlink" title="Hadoop版本与架构核心"></a>Hadoop版本与架构核心</h2><p>Apache开源社区版本，现已到3.x </p>
+<p>Hadoop1.0版本两个核心：HDFS+MapReduce</p>
+<p>Hadoop2.0版本，引入了Yarn。核心：HDFS+Yarn+Mapreduce</p>
+<p>​    Yarn是资源调度框架。能够细粒度的管理和调度任务。此外，还能够支持其他的计算框架，比如spark等。</p>
+<p><img src="/2019/08/24/Hadoop开篇/1775767-20190824015110535-1305780494-20190824134434478.png" alt="img"></p>
+<p>Hadoop3.0版本，未引入新核心，在原核心上，升级了很多东西。具体参见官网</p>
+<h4 id="Hadoop的核心组件："><a href="#Hadoop的核心组件：" class="headerlink" title="Hadoop的核心组件："></a>Hadoop的核心组件：</h4><p>　　1）<strong>Hadoop Common</strong>：支持其他Hadoop模块的常用工具。</p>
+<p>　　2)  <strong>Hadoop分布式文件系统（HDFS™）</strong>：一种分布式文件系统，可提供对应用程序数据的高吞吐量访问。</p>
+<p>　　3)  <strong>Hadoop YARN</strong>：作业调度和集群资源管理的框架。</p>
+<p>　　<strong>4)  Hadoop MapReduce</strong>：一种用于并行处理大型数据集的基于YARN的系统。</p>
+<p>　　大数据的处理主要就是<strong>存储</strong>和<strong>计算</strong>。</p>
+<p>如果说安装hadoop集群，其实就是安装了两个东西： 一个操作系统YARN 和 一个文件系统HDFS。其实MapReduce就是运行在YARN之上的应用。</p>
+<p>操作系统 　　文件系统 　　应用程序<br>win7 　　　　NTFS　　　  QQ，WeChat<br>YARN 　　　 HDFS 　　    MapReduce</p>
+<h2 id="Hadoop理念"><a href="#Hadoop理念" class="headerlink" title="Hadoop理念"></a>Hadoop理念</h2><p>Hadoop可运行于一般的商用服务器上，具有高容错、高可靠性、高扩展性等特点</p>
+<p>特别适合写一次，读多次的场景</p>
+<p> 适合场景</p>
+<ul>
+<li>大规模数据</li>
+<li>流式数据（写一次，读多次）</li>
+<li>商用硬件（一般硬件）</li>
+</ul>
+<p>不适合场景</p>
+<ul>
+<li>低延时的数据访问</li>
+<li>大量的小文件</li>
+<li>频繁修改文件</li>
+</ul>
+<h2 id="PS"><a href="#PS" class="headerlink" title="PS"></a>PS</h2><p>Hadoop起源的三个google论文   中文版</p>
+<p><a href="http://blog.bizcloudsoft.com/wp-content/uploads/Google-File-System%E4%B8%AD%E6%96%87%E7%89%88_1.0.pdf" target="_blank" rel="noopener">GFS</a>  Google的分布式文件系统Google File System<br><a href="http://blog.bizcloudsoft.com/wp-content/uploads/Google-Bigtable%E4%B8%AD%E6%96%87%E7%89%88_1.0.pdf" target="_blank" rel="noopener">BigTable</a>  一个大型的分布式数据库<br><a href="http://blog.bizcloudsoft.com/wp-content/uploads/Google-MapReduce%E4%B8%AD%E6%96%87%E7%89%88_1.0.pdf" target="_blank" rel="noopener">MapReduce</a> Google的MapReduce开源分布式并行计算框架</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
     <div class="article-category tagcloud">
     <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
     </div>
 
 
-          
+      
     <div class="article-tag tagcloud">
         <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hadoop/">Hadoop</a></li></ul>
     </div>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-          <div class="article-meta">
-              <a href="/2019/10/01/Hadoop系列（六）Hadoop三大核心之MapReduce-基础/" class="archive-article-date">
-      <time datetime="2019-10-01T08:51:48.000Z" itemprop="datePublished">10-01</time>
-</a>
-
-
-        </div>
-         
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/10/01/Hadoop系列（六）Hadoop三大核心之MapReduce-基础/">Hadoop系列（六）Hadoop三大核心之MapReduce 基础</a>
-    </h1>
-  
-
-        <div class="article-info info-on-archive">
-          
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
+      
+      <div class="clearfix"></div>
     </div>
-
-
-          
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hadoop/">Hadoop</a></li></ul>
-    </div>
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
     
+  </div>
+  
+</article>
 
+
+
+
+
+
+
+
+
+  
+  
+    <nav id="page-nav">
+      <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+    </nav>
+  
 </div>
       <footer id="footer">
     <div class="outer">
