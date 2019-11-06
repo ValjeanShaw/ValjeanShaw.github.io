@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="ID喵">
 <meta property="og:description" content="喵了个喵，我又遇到瓶颈了  [TOC] 接下来以一个简单的WordCount为例子，介绍Java版本的MapReduce的程序编写。 mapreduce程序主要分三部分：1.map部分，2.reduce部分，3.提交部分。 1. 准备部分hadoop中，针对数据类型自成一体，与java的数据类型对应。封装在hadoop.io包中，主要分为基本类型和其它类型。  基本数据类型     数据类型 h">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-10-15T01:50:50.113Z">
+<meta property="og:updated_time" content="2019-10-23T12:00:46.802Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写">
 <meta name="twitter:description" content="喵了个喵，我又遇到瓶颈了  [TOC] 接下来以一个简单的WordCount为例子，介绍Java版本的MapReduce的程序编写。 mapreduce程序主要分三部分：1.map部分，2.reduce部分，3.提交部分。 1. 准备部分hadoop中，针对数据类型自成一体，与java的数据类型对应。封装在hadoop.io包中，主要分为基本类型和其它类型。  基本数据类型     数据类型 h">
@@ -383,13 +383,13 @@
 
 <h3 id="3-Map部分"><a href="#3-Map部分" class="headerlink" title="3. Map部分"></a>3. Map部分</h3><p>映射部分，将数据逐条处理</p>
 <p>首先，需要继承Mapper&lt;KEYIN, VALUEIN, KEYOUT, VALUEOUT&gt;类</p>
-<p>四个泛型参数分别代表：输入key  输出value   输出key   输出value</p>
+<p>四个泛型参数分别代表：输入key  输入value   输出key   输出value</p>
 <p>然后重写mapper的map方法</p>
 <figure class="highlight plain"><figcaption><span>key, VALUEIN value, Context context) throws IOException, InterruptedException```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">主体代码:</span><br><span class="line"></span><br><span class="line">```java</span><br><span class="line">public class WordCountMap extends Mapper&lt;LongWritable, Text, Text, IntWritable&gt; &#123;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     *  流程，输入key和value，map的结果写入到context中</span><br><span class="line">     */</span><br><span class="line">    @Override</span><br><span class="line">    public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException &#123;</span><br><span class="line">        //读取一行数据</span><br><span class="line">        String line = value.toString();</span><br><span class="line">        //因为英文字母是以“ ”为间隔的，因此使用“ ”分隔符将一行数据切成多个单词并存在数组中</span><br><span class="line">        String str[] = line.split(&quot; &quot;);</span><br><span class="line">        //循环迭代字符串，将一个单词变成&lt;key,value&gt;形式，及&lt;&quot;hello&quot;,1&gt;</span><br><span class="line">        for (String s : str) &#123;</span><br><span class="line">            context.write(new Text(s), new IntWritable(1));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="4-Reduce部分"><a href="#4-Reduce部分" class="headerlink" title="4.Reduce部分"></a>4.Reduce部分</h3><p>归并部分，将map处理和shuffle之后的数据进行归并。shuffle过程由hadoop控制</p>
 <p>Reducer&lt;KEYIN,VALUEIN,KEYOUT,VALUEOUT&gt;</p>
-<p>四个泛型参数分别代表：输入key  输出value   输出key   输出value</p>
+<p>四个泛型参数分别代表：输入key  输入value   输出key   输出value</p>
 <p>然后重写reducer的reduce方法</p>
 <figure class="highlight plain"><figcaption><span>key, Iterable<valuein> values, Context context) throws IOException, InterruptedException```</valuein></span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">主体代码：</span><br><span class="line"></span><br><span class="line">```java</span><br><span class="line">public class WordCountReduce extends Reducer&lt;Text,IntWritable,Text, IntWritable&gt; &#123;</span><br><span class="line">    /**</span><br><span class="line">     *  流程，输入key和value，map的结果写入到context中</span><br><span class="line">     */</span><br><span class="line">    @Override</span><br><span class="line">    public void reduce(Text key, Iterable&lt;IntWritable&gt; values,Context context)throws IOException,InterruptedException&#123;</span><br><span class="line">        int count = 0;</span><br><span class="line"></span><br><span class="line">        for(IntWritable value: values) &#123;</span><br><span class="line">            count++;</span><br><span class="line">        &#125;</span><br><span class="line">        context.write(key,new IntWritable(count));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -413,7 +413,7 @@
         <p><span>本文标题:</span><a href="/2019/10/14/Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写/">Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">ID喵</a></p>
         <p><span>发布时间:</span>2019-10-14, 20:17:40</p>
-        <p><span>最后更新:</span>2019-10-15, 09:50:50</p>
+        <p><span>最后更新:</span>2019-10-23, 20:00:46</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2019/10/14/Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写/" title="Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写">http://yoursite.com/2019/10/14/Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2019/10/14/Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写/　　作者: ID喵" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
@@ -427,6 +427,12 @@
 
 
     <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2019/10/23/Hadoop系列（八）Hadoop三大核心之Yarn-资源调度初探/">
+                    Hadoop系列（八）Hadoop三大核心之Yarn 资源调度初探
+                </a>
+            </div>
         
         
             <div id="article-nav-older" class="article-nav-title">
@@ -499,7 +505,9 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+            <a href="/2019/10/23/Hadoop系列（八）Hadoop三大核心之Yarn-资源调度初探/" title="上一篇: Hadoop系列（八）Hadoop三大核心之Yarn 资源调度初探">
+                <i class="fa fa-angle-left"></i>
+            </a>
         
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
@@ -511,7 +519,7 @@
         
     </div>
 
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/10/14/Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写/">Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/10/01/Hadoop系列（六）Hadoop三大核心之MapReduce-基础/">Hadoop系列（六）Hadoop三大核心之MapReduce 基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/19/分布式系列-二-一致性协议 2PC和3PC/">分布式系列 (二) 一致性协议 2PC和3PC</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/09/分布式系列-一-分布式架构概念/">分布式系列 (一) 分布式架构概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/08/Hadoop系列（五）Hadoop三大核心之HDFS-读写流程/">Hadoop系列（五）Hadoop三大核心之HDFS 读写流程</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/05/序列化/">序列化</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/02/进程，线程与多核，多cpu之间的关系/">进程，线程与多核，多cpu之间的关系</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/">Hadoop系列（四）Hadoop三大核心之HDFS Java API</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/">Hadoop系列（三）Hadoop三大核心之HDFS shell常用命令</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/">Hadoop系列（二）Hadoop三大核心之HDFS基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/24/Hadoop开篇/">Hadoop系列（一）开篇简介</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/11/04/Hadoop系列（九）Hadoop三大核心之Yarn-资源调度详解/">Hadoop系列（九）Hadoop三大核心之Yarn-资源调度详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/10/23/Hadoop系列（八）Hadoop三大核心之Yarn-资源调度初探/">Hadoop系列（八）Hadoop三大核心之Yarn 资源调度初探</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/10/14/Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写/">Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/10/01/Hadoop系列（六）Hadoop三大核心之MapReduce-基础/">Hadoop系列（六）Hadoop三大核心之MapReduce 基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/19/分布式系列-二-一致性协议 2PC和3PC/">分布式系列 (二) 一致性协议 2PC和3PC</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/09/分布式系列-一-分布式架构概念/">分布式系列 (一) 分布式架构概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/08/Hadoop系列（五）Hadoop三大核心之HDFS-读写流程/">Hadoop系列（五）Hadoop三大核心之HDFS 读写流程</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/05/序列化/">序列化</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/02/进程，线程与多核，多cpu之间的关系/">进程，线程与多核，多cpu之间的关系</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/">Hadoop系列（四）Hadoop三大核心之HDFS Java API</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/">Hadoop系列（三）Hadoop三大核心之HDFS shell常用命令</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/">Hadoop系列（二）Hadoop三大核心之HDFS基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/08/24/Hadoop开篇/">Hadoop系列（一）开篇简介</a></li></ul>
 
 
 

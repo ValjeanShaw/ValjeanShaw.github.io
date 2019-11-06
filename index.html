@@ -255,6 +255,247 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-Hadoop系列（九）Hadoop三大核心之Yarn-资源调度详解" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2019/11/04/Hadoop系列（九）Hadoop三大核心之Yarn-资源调度详解/" class="article-date">
+      <time datetime="2019-11-04T06:47:47.000Z" itemprop="datePublished">2019-11-04</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/11/04/Hadoop系列（九）Hadoop三大核心之Yarn-资源调度详解/">Hadoop系列（九）Hadoop三大核心之Yarn-资源调度详解</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <blockquote>
+<p>喵了个喵，我又遇到瓶颈了</p>
+</blockquote>
+<p>[TOC]</p>
+<h2 id="Yarn的调度流程详解"><a href="#Yarn的调度流程详解" class="headerlink" title="Yarn的调度流程详解"></a>Yarn的调度流程详解</h2><p><img src="/2019/11/04/Hadoop系列（九）Hadoop三大核心之Yarn-资源调度详解/image-20191104160107191.png" alt="image-20191104160107191"></p>
+<ol>
+<li><p>Client端提交作业到ResourceManager中的ApplicationManager，申请JobID（唯一ID）</p>
+</li>
+<li><p>RM返回一个作业ID，并且将一个临时hdfs路径返回给 Client，要求Client将要上传的文件发送到这个临时目录中。（任务结束后，该临时目录将被删除）</p>
+</li>
+<li><p>Client将作业运行所需要的资源（jar包、配置文件和分片信息等）向指定的HDFS路径上传</p>
+</li>
+<li><p>上传成功后，向RM中的AM发送请求，执行作业</p>
+</li>
+<li><p>AM将请求转发给调度器，调度器开始处理请求</p>
+</li>
+<li><p>调度器将任务放置队列中，当执行到请求的时候，则告知ApplicationManager 可以分配容器，告知NodeManager的信息用于开辟Container</p>
+</li>
+<li><p>ApplicationManager命令NodeManager创建一个Container并运行作业的ApplicationMaster。NodeManager创建一个Container并启动作业的ApplicationMaster。<strong>ApplicationMaster将自己注册到ApplicationManager，使得ApplicationManager可以监控到Job的执行状态，Client也可以通过ApplicationManager对作业进行控制。</strong></p>
+</li>
+<li><p>ApplicationMaster查询临时hdfs路径，获取jar包信息，配置文件等，创建map和reduce任务</p>
+</li>
+<li><p>ApplicationMaster请求调度器分配资源，开辟map，reduce任务资源</p>
+</li>
+<li><p>调度器返回执行信息，内含在哪些NodeManager可开辟资源信息</p>
+</li>
+<li><p>ApplicationMaster通知NodeManager开辟资源池启动map和reduce任务</p>
+</li>
+<li><p>NodeManager 启动自身资源池中的任务</p>
+</li>
+<li><p>map、reduce任务查询临时hdfs路径的数据。开始执行。<strong>ApplicationMaster实时监控自己管理的map、reduce任务执行情况，如果失败，请求调度器在新节点中开辟资源池，执行失败的程序。ApplicationManager实时监控自己管理的ApplicationMaster执行情况，如果ApplicationMaster 宕机，创建一个新的ApplicationMaster，继续监控原有的map和reduce任务，在此期间，map、reduce任务不受影响</strong></p>
+</li>
+<li><p>程序成功，释放资源</p>
+</li>
+</ol>
+<h2 id="Yarn的调度策略"><a href="#Yarn的调度策略" class="headerlink" title="Yarn的调度策略"></a>Yarn的调度策略</h2><ul>
+<li>FIFO调度</li>
+<li>容量调度</li>
+<li>公平调度</li>
+</ul>
+<h3 id="1-FIFO先进先出调度"><a href="#1-FIFO先进先出调度" class="headerlink" title="1.FIFO先进先出调度"></a>1.FIFO先进先出调度</h3><p>这种调度最简单，将应用放置在一个队列中，然后按照提交的顺序将所有的Applications放到队列中，<strong>先按照作业的优先级高低、再按照到达时间的先后</strong>，为每个app分配资源。如果第一个app需要的资源被满足了，如果还剩下了资源并且满足第二个app需要的资源，那么就为第二个app分配资源。</p>
+<p>优点：简单，不需要配置。</p>
+<p>缺点：不适合共享集群。如果有大的app需要很多资源，那么其他app可能会一直等待。</p>
+<p><img src="/2019/11/04/Hadoop系列（九）Hadoop三大核心之Yarn-资源调度详解/image-20191107004016198.png" alt="image-20191107004016198"></p>
+<h3 id="2-Capacity-容量调度机制"><a href="#2-Capacity-容量调度机制" class="headerlink" title="2.Capacity 容量调度机制"></a>2.Capacity 容量调度机制</h3><p>容量调度机制适用于一个集群（集群被多个组织共享）中运行多个Application的情况，目标是最大化吞吐量和集群利用率。</p>
+<p>容量调度允许将整个集群的资源分成多个部分，每个组织使用其中的一部分，即每个组织有一个专门的队列，每个组织的队列还可以进一步划分成层次结构（<strong>Hierarchical Queues</strong>），从而允许组织内部的不同用户组的使用。</p>
+<p>每个队列内部，按照FIFO的方式调度Applications。当某个队列的资源空闲时，可以将它的剩余资源共享给其他队列。</p>
+<p><img src="/2019/11/04/Hadoop系列（九）Hadoop三大核心之Yarn-资源调度详解/image-20191107004427447.png" alt="image-20191107004427447"></p>
+<p>实例：</p>
+<p>有一个专门的队列允许小的apps提交之后能够尽快执行，job1先提交到queueA，并没有占用系统的全部资源（假如job1需要100G内存，但是整个集群只有100G内存，那么只分配给job1  80G），job2可提交到queueB 中快速执行。</p>
+<h3 id="3-Fair-公平调度机制"><a href="#3-Fair-公平调度机制" class="headerlink" title="3.Fair 公平调度机制"></a>3.Fair 公平调度机制</h3><p><strong>FairScheduler</strong>允许应用在一个集群中公平地共享资源。默认情况下FairScheduler的公平调度只基于内存，也可以配置成基于memory &amp; CPU。当集群中只有一个app时，它独占集群资源。当有新的app提交时，空闲的资源被新的app使用，这样最终每个app就会得到大约相同的资源。可以为不同的app设置优先级，决定每个app占用的资源百分比。FairScheduler可以让短的作业在合理的时间内完成，而不必一直等待长作业的完成。</p>
+<p><strong>Fair Sharing</strong>： Scheduler将apps组织成queues，将资源在这些queues之间公平分配。默认情况下，所有的apps都加入到名字为“default“的队列中。app也可以指定要加入哪个队列中。队列内部的默认调度策略是基于内存的共享策略，也可以配置成FIFO和multi-resource with Dominant Resource Fairness</p>
+<p><strong>Minimum Sharing</strong>：FairScheduller提供公平共享，还允许指定minimum shares to queues，从而保证所有的用户以及Apps都能得到足够的资源。如果有的app用不了指定的minimum的资源，那么可以将超出的资源分给别的app使用。</p>
+<p>FairScheduler默认让所有的apps都运行，但是也可以通过配置文件配置每个queue中的分配权重，若权重1：1，当两个queue同时执行任务时，各分到一半资源。</p>
+<p><img src="/2019/11/04/Hadoop系列（九）Hadoop三大核心之Yarn-资源调度详解/image-20191107005019943.png" alt="image-20191107005019943"></p>
+<p>实例：</p>
+<p>两个用户A和B。A提交job1时集群内没有正在运行的app，因此job1独占集群中的资源。用户B的job2提交时，job2在job1释放一半的containers之后，开始执行。job2还没执行完的时候，用户B提交了job3，job2释放它占用的一半containers之后，job3获得资源开始执行。</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hadoop/">Hadoop</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-Hadoop系列（八）Hadoop三大核心之Yarn-资源调度初探" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2019/10/23/Hadoop系列（八）Hadoop三大核心之Yarn-资源调度初探/" class="article-date">
+      <time datetime="2019-10-23T11:59:08.000Z" itemprop="datePublished">2019-10-23</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/10/23/Hadoop系列（八）Hadoop三大核心之Yarn-资源调度初探/">Hadoop系列（八）Hadoop三大核心之Yarn 资源调度初探</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <blockquote>
+<p>喵了个喵，我又遇到瓶颈了</p>
+</blockquote>
+<p>[TOC]</p>
+<h2 id="0-Yarn的来源"><a href="#0-Yarn的来源" class="headerlink" title="0. Yarn的来源"></a>0. Yarn的来源</h2><p>​    hadoop 1.x的时代，并没有Yarn，hadoop核心组件只有HDFS和MapReduce。到了hadoop2.x才有了Yarn的诞生，组件包含HDFS，MapReduce和Yarn。</p>
+<p>​    诞生原因：hadoop 1.x存在的最大问题就是资源管理问题。技术的发展不再满足于hadoop集群中只使用MapReduce一个计算框架，人们更希望有一套合理的管理机制，来控制集群的资源管理问题。就此Yarn诞生。</p>
+<h2 id="1-YARN概述"><a href="#1-YARN概述" class="headerlink" title="1. YARN概述"></a>1. YARN概述</h2><p>全称 Yet Another Resource Negotiator。是一个资源调度平台，负责为运算程序提供服务器运算资源，相当于一个分布式的操作系统平台，而 MapReduce，spark 等运算程序可以运行在YARN上，相当于应用程序运行于操作系统之上</p>
+<p>YARN 是 Hadoop2.x 版本中的一个新特性。它的出现是为了解决第一代 MapReduce 编程框架的不足，提高集群环境下的资源利用率，这些资源包括内存，磁盘，网络，IO等。Hadoop2.X 版本中重新设计的这个 YARN 集群，具有更好的扩展性，可用性，可靠性，向后兼容性，以及能支持除 MapReduce 以外的更多分布式计算程序</p>
+<p>YARN的特点：</p>
+<ol>
+<li>YARN不清楚提交的程序的运行机制</li>
+<li>只提供运算资源的调度，分配。用户申请就分配。</li>
+<li>与运行的用户程序完全解耦。 YARN 上可以运行各种类型的分布式运算程序。比如 MapReduce、Storm 程序，Spark 程序等</li>
+<li>yarn 是一个通用的资源调度平台，企业中存在的各种运算集群都可以整合在一个物理集群上，提高资源利用率，方便数据共享</li>
+</ol>
+<p>Yarn最大的特点是执行调度与Hadoop上运行的任务类型无关</p>
+<h2 id="2-YARN的重要组成部分"><a href="#2-YARN的重要组成部分" class="headerlink" title="2. YARN的重要组成部分"></a>2. YARN的重要组成部分</h2><p>有两类长期运行的守护进程提供核心服务</p>
+<ul>
+<li>ResourceManager(主节点) ：全局资源管理器</li>
+<li>NodeManager(从节点)：节点资源管理器</li>
+</ul>
+<p>主从结构如图</p>
+<p><img src="/2019/10/23/Hadoop系列（八）Hadoop三大核心之Yarn-资源调度初探/image-20191103184844628.png" alt="image-20191103184844628"></p>
+<h3 id="2-1-ResourceManager"><a href="#2-1-ResourceManager" class="headerlink" title="2.1 ResourceManager"></a>2.1 ResourceManager</h3><p>RM组件是负责资源管理的，整个系统有且只有一个 RM ，来负责资源的调度。ResourceManager 会为每一个 Application 启动一个 ApplicationMaster， 并且 ApplicationMaster 分散在各个 NodeManager 节点</p>
+<p>RM里面还有两个重要组成部分：</p>
+<ol>
+<li>应用程序管理器  Application Manager</li>
+<li>资源调度器          Resource Scheduler</li>
+</ol>
+<p>ResourceManager名字就是这两个词合并而来</p>
+<h4 id="Application-Manager-应用程序管理器"><a href="#Application-Manager-应用程序管理器" class="headerlink" title="Application Manager   应用程序管理器"></a>Application Manager   应用程序管理器</h4><p>应用程序管理器就是负责管理 Client 用户提交的应用的管理器</p>
+<p>主要功能：</p>
+<ol>
+<li><p>负责接收client端传输的job请求，为应用(MapReduce 程序)分配一个Container（资源池）来运行一个Application Master</p>
+</li>
+<li><p>负责监控<strong>Appication Master</strong></p>
+</li>
+<li><p>并且在遇到失败的时候重启Application Master</p>
+</li>
+</ol>
+<h4 id="Scheduler-资源调度器"><a href="#Scheduler-资源调度器" class="headerlink" title="Scheduler   资源调度器"></a>Scheduler   资源调度器</h4><p>Resource Scheduler即资源调度器，是让每一个节点都充分利用起来，合理分配和调度资源的一种管理器。</p>
+<p>值得注意的是：调度器真的只是一个调度器，不参与任何具体的和应用程序相关的工作。</p>
+<h3 id="2-2-NodeManager"><a href="#2-2-NodeManager" class="headerlink" title="2.2 NodeManager"></a>2.2 NodeManager</h3><p>NodeManager 是 YARN 集群当中真正资源的提供者，是真正执行应用程序的容器的提供者， 监控应用程序的资源使用情况（CPU，内存，硬盘，网络），并通过心跳向集群资源调度器 ResourceManager 进行汇报以更新自己的健康状态。同时其也会监督 Container 的生命周期管理，监控每个 Container 的资源使用（内存、CPU 等）情况，追踪节点健康状况，管理日 志和不同应用程序用到的附属服务（auxiliary service）。</p>
+<h3 id="2-3-逻辑上的组件Application-Master"><a href="#2-3-逻辑上的组件Application-Master" class="headerlink" title="2.3 逻辑上的组件Application Master"></a>2.3 逻辑上的组件Application Master</h3><p>ApplicationMaster 就是一个java程序，进程名：MRAppMaster</p>
+<p>作用：负责监控Map、Reduce任务。用户提交的每一个程序都会产生一个ApplicationMaster，这个AM就是负责整个任务的一个管理者，由这个 AM去向ResourceManager 申请容器资源，获得资源后会将要运行的程序发送到容器上启动，然后进行分布式计算。</p>
+<p>主要功能：</p>
+<ol>
+<li>与调度器（Scheduler）协商，获取执行资源</li>
+<li>与NodeManager通信，启动任务和停止任务</li>
+<li>监控所有旗下Job的执行状态，重启失败任务</li>
+</ol>
+<h2 id="3-Container-资源池"><a href="#3-Container-资源池" class="headerlink" title="3. Container  资源池"></a>3. Container  资源池</h2><p>Yarn中的资源抽象，封装了多维度资源： 内存，cpu，磁盘等。Container就是Scheduler进行资源分配的一个单位，也是运行各个任务的容器。</p>
+<ul>
+<li>容器由 NodeManager 启动和管理，并被它所监控。</li>
+<li>容器被 ResourceManager 进行调度。</li>
+</ul>
+<p><img src="/2019/10/23/Hadoop系列（八）Hadoop三大核心之Yarn-资源调度初探/image-20191104135136097.png" alt="image-20191104135136097"></p>
+<h2 id="4-小结"><a href="#4-小结" class="headerlink" title="4. 小结"></a>4. 小结</h2><p>Yarn是Hadoop2.x之后引入的新组件。Yarn的架构采用了主从结构，一主多从（ResourceManager &amp; NodeManager）。Yarn在Hadoop中的功能作用有两个，第一是负责Hadoop集群中的资源管理(resource management)，第二是负责对任务进行调度和监控(scheduling/monitoring)。</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hadoop/">Hadoop</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-Hadoop系列（七）Hadoop三大核心之MapReduce-程序编写" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -370,13 +611,13 @@
 
 <h3 id="3-Map部分"><a href="#3-Map部分" class="headerlink" title="3. Map部分"></a>3. Map部分</h3><p>映射部分，将数据逐条处理</p>
 <p>首先，需要继承Mapper&lt;KEYIN, VALUEIN, KEYOUT, VALUEOUT&gt;类</p>
-<p>四个泛型参数分别代表：输入key  输出value   输出key   输出value</p>
+<p>四个泛型参数分别代表：输入key  输入value   输出key   输出value</p>
 <p>然后重写mapper的map方法</p>
 <figure class="highlight plain"><figcaption><span>key, VALUEIN value, Context context) throws IOException, InterruptedException```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">主体代码:</span><br><span class="line"></span><br><span class="line">```java</span><br><span class="line">public class WordCountMap extends Mapper&lt;LongWritable, Text, Text, IntWritable&gt; &#123;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     *  流程，输入key和value，map的结果写入到context中</span><br><span class="line">     */</span><br><span class="line">    @Override</span><br><span class="line">    public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException &#123;</span><br><span class="line">        //读取一行数据</span><br><span class="line">        String line = value.toString();</span><br><span class="line">        //因为英文字母是以“ ”为间隔的，因此使用“ ”分隔符将一行数据切成多个单词并存在数组中</span><br><span class="line">        String str[] = line.split(&quot; &quot;);</span><br><span class="line">        //循环迭代字符串，将一个单词变成&lt;key,value&gt;形式，及&lt;&quot;hello&quot;,1&gt;</span><br><span class="line">        for (String s : str) &#123;</span><br><span class="line">            context.write(new Text(s), new IntWritable(1));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="4-Reduce部分"><a href="#4-Reduce部分" class="headerlink" title="4.Reduce部分"></a>4.Reduce部分</h3><p>归并部分，将map处理和shuffle之后的数据进行归并。shuffle过程由hadoop控制</p>
 <p>Reducer&lt;KEYIN,VALUEIN,KEYOUT,VALUEOUT&gt;</p>
-<p>四个泛型参数分别代表：输入key  输出value   输出key   输出value</p>
+<p>四个泛型参数分别代表：输入key  输入value   输出key   输出value</p>
 <p>然后重写reducer的reduce方法</p>
 <figure class="highlight plain"><figcaption><span>key, Iterable<valuein> values, Context context) throws IOException, InterruptedException```</valuein></span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">主体代码：</span><br><span class="line"></span><br><span class="line">```java</span><br><span class="line">public class WordCountReduce extends Reducer&lt;Text,IntWritable,Text, IntWritable&gt; &#123;</span><br><span class="line">    /**</span><br><span class="line">     *  流程，输入key和value，map的结果写入到context中</span><br><span class="line">     */</span><br><span class="line">    @Override</span><br><span class="line">    public void reduce(Text key, Iterable&lt;IntWritable&gt; values,Context context)throws IOException,InterruptedException&#123;</span><br><span class="line">        int count = 0;</span><br><span class="line"></span><br><span class="line">        for(IntWritable value: values) &#123;</span><br><span class="line">            count++;</span><br><span class="line">        &#125;</span><br><span class="line">        context.write(key,new IntWritable(count));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -1118,217 +1359,6 @@
 <li>数据写到hdfs中</li>
 </ol>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testWriteData</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    FSDataOutputStream out = fileSystem.create(<span class="keyword">new</span> Path(<span class="string">"/yy.jpg"</span>), <span class="keyword">false</span>);</span><br><span class="line">    FileInputStream in = <span class="keyword">new</span> FileInputStream(<span class="string">"~/Download/wechatpic_20190309221605.jpg"</span>);</span><br><span class="line">    <span class="keyword">byte</span>[] buf = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">    <span class="keyword">int</span> read = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> ((read = in.read(buf)) != -<span class="number">1</span>) &#123;</span><br><span class="line">        out.write(buf, <span class="number">0</span>, read);</span><br><span class="line">    &#125;</span><br><span class="line">    out.close();</span><br><span class="line">    fileSystem.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hadoop/">Hadoop</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/" class="article-date">
-      <time datetime="2019-08-29T15:51:48.000Z" itemprop="datePublished">2019-08-29</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/">Hadoop系列（三）Hadoop三大核心之HDFS shell常用命令</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <blockquote>
-<p>喵了个喵，我又遇到瓶颈了</p>
-</blockquote>
-<p>[TOC]</p>
-<h2 id="HDFS常用命令"><a href="#HDFS常用命令" class="headerlink" title="HDFS常用命令"></a>HDFS常用命令</h2><h3 id="help-查看所有命令"><a href="#help-查看所有命令" class="headerlink" title="help 查看所有命令"></a>help 查看所有命令</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs help</code></p>
-<h3 id="查看路径文件"><a href="#查看路径文件" class="headerlink" title="查看路径文件"></a>查看路径文件</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -ls /</code></p>
-<h3 id="创建文件夹"><a href="#创建文件夹" class="headerlink" title="创建文件夹"></a>创建文件夹</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -mkdir /test</code></p>
-<h3 id="创建多级文件夹"><a href="#创建多级文件夹" class="headerlink" title="创建多级文件夹"></a>创建多级文件夹</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -mkdir -p /test/test1/test2</code></p>
-<h3 id="查看指定目录下和子目录下所有文件"><a href="#查看指定目录下和子目录下所有文件" class="headerlink" title="查看指定目录下和子目录下所有文件"></a>查看指定目录下和子目录下所有文件</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -ls -R /test</code></p>
-<h3 id="上传文件"><a href="#上传文件" class="headerlink" title="上传文件"></a>上传文件</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -put part.txt /test</code></p>
-<p>or</p>
-<p><code>[172.23.7.9:hadoop]$ hadoop fs -copyFromLocal part.txt /test</code></p>
-<h3 id="下载文件"><a href="#下载文件" class="headerlink" title="下载文件"></a>下载文件</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -get /test/part.txt ~/test</code></p>
-<p>or</p>
-<p><code>[172.23.7.9:hadoop]$ hadoop fs -copyToLocal /test/part.txt ~/test</code></p>
-<h3 id="合并下载"><a href="#合并下载" class="headerlink" title="合并下载"></a>合并下载</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -getmerge /test/part0.txt /test/part1.txt ./temp.txt</code></p>
-<h3 id="复制"><a href="#复制" class="headerlink" title="复制"></a>复制</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -cp /test/part.txt /output</code></p>
-<h3 id="移动"><a href="#移动" class="headerlink" title="移动"></a>移动</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -mv /test/part.txt /output</code></p>
-<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -rm /test/part.txt</code></p>
-<p>强制删除</p>
-<p><code>[172.23.7.9:hadoop]$ hadoop fs -rm -r /test/part.txt</code></p>
-<h3 id="查看文件内容"><a href="#查看文件内容" class="headerlink" title="查看文件内容"></a>查看文件内容</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -cat /test/part.txt</code></p>
-<h3 id="显示文件大小"><a href="#显示文件大小" class="headerlink" title="显示文件大小"></a>显示文件大小</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -du -h /test/part.txt</code></p>
-<h3 id="test"><a href="#test" class="headerlink" title="test"></a>test</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -test -[ezd] /test/part.txt</code></p>
-<p>选项：<br>-e 检查文件是否存在。如果存在则返回0。<br>-z 检查文件是否是0字节。如果是则返回0。<br>-d 如果路径是个目录，则返回1，否则返回0。</p>
-<h2 id="web界面"><a href="#web界面" class="headerlink" title="web界面"></a>web界面</h2><p><code>http://xx.xx.xx.xx:9870/explorer.html#/</code></p>
-<p><img src="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/image-20190830010745946.png" alt="image-20190830010745946"></p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hadoop/">Hadoop</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Hadoop系列（二）Hadoop三个核心之HDFS" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/" class="article-date">
-      <time datetime="2019-08-25T14:27:28.000Z" itemprop="datePublished">2019-08-25</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/">Hadoop系列（二）Hadoop三大核心之HDFS基础</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <blockquote>
-<p>喵了个喵，我又遇到瓶颈了</p>
-</blockquote>
-<p>[TOC]</p>
-<p>针对海量数据，核心问题始终是计算和存储。当数据集的大小超过一台独立物理计算机的存储能力时，就有必要对它进行分区并存储到多台机器上。跨机器存储的文件系统就被成为分布式文件系统。分布式系统架构于网络之上，势必引入网络编程的复杂性，如何实现容忍节点故障但不丢失数据，是HDFS的重要挑战。</p>
-<h2 id="hdfs基础"><a href="#hdfs基础" class="headerlink" title="hdfs基础"></a>hdfs基础</h2><p>Hadoop 自带HDFS分布式文件系统：Hadoop Distributed Filesystem。也简称DFS。主要用来解决海量数据的存储问题。</p>
-<p>HDFS有以下两点特性</p>
-<ul>
-<li>文件系统：用于存储文件，通过统一目录树定位</li>
-<li>分布式：很多机器共同支撑其功能</li>
-</ul>
-<h3 id="重要概念"><a href="#重要概念" class="headerlink" title="重要概念"></a>重要概念</h3><h4 id="数据块"><a href="#数据块" class="headerlink" title="数据块"></a>数据块</h4><p>和一般的文件系统一样，HDFS也有块（block）的概念，HDFS上的文件也被划分为块大小的多个分块作为独立的存储单元。</p>
-<p>Hadoop 1.x 默认大小为64MB, 2.x和3.x均为128MB。具体指定版本的默认值，可参见官网<a href="http://hadoop.apache.org/docs/r3.0.0/hadoop-project-dist/hadoop-hdfs/HdfsDesign.html#Data_Blocks" target="_blank" rel="noopener">块的定义</a>。HDFS的块比磁盘的块大，是为了最小化寻址开销，减少寻址定位所需时间。</p>
-<p>与磁盘文件系统不一样的是*<em>HDFS中小于一个块大小的文件不会占据整个块的空间 *</em>例：当一个1MB的文件存储在一个128MB的块中时，文件只使用1MB的磁盘空间，而不是128MB。当一个150M的文件要存储到HDFS中，将会拆分成2个块，大小分别是128M、22M。</p>
-<p>设置数据块的好处：</p>
-<p>（1）一个文件的大小可以大于集群任意节点磁盘的容量</p>
-<p>（2）容易对数据进行备份，提高容错能力，块丢失可快速从其它节点复制</p>
-<p>（3）使用抽象块概念而非整个文件作为存储单元，大大简化存储子系统的设计</p>
-<p>HDFS集群有两类节点以管理节点-工作节点的方式运行。即NameNode和DataNode。</p>
-<h4 id="NameNode（NN）"><a href="#NameNode（NN）" class="headerlink" title="NameNode（NN）"></a>NameNode（NN）</h4><p>文件系统的管理节点。管理文件系统的命名空间，维护着文本系统树及整棵树内所有文件和目录。基于内存存储，在内存中保存着文件系统每个文件和每个数据块的引用关系以及块信息等。文件目录在NameNode重启后，需要重建。</p>
-<p>功能：</p>
-<ul>
-<li>接收客户端读写服务</li>
-<li>收集DataNode汇报的Block列表信息</li>
-</ul>
-<h4 id="DataNode（DN）"><a href="#DataNode（DN）" class="headerlink" title="DataNode（DN）"></a>DataNode（DN）</h4><p>文件系统的工作节点，多个节点共同工作。本地磁盘目录存储数据，文件形式。</p>
-<p>功能：</p>
-<ul>
-<li>文件形式存储数据（Block）</li>
-<li>存储Block的元数据信息文件 （md5）</li>
-<li>启动时向NameNode汇报block信息</li>
-<li>与NameNode保持心跳连接（3s/次）</li>
-</ul>
-<p>NameNode虽然以内存方式存储，但是NameNode也会在适当时候持久化两类文件到磁盘。</p>
-<ul>
-<li>fsimage：NameNode启动时对整个文件系统的快照</li>
-<li>edit logs：NameNode启动后，对文件系统的改动序列</li>
-</ul>
-<p><img src="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/image-20190827232356723.png" alt="image-20190827232356723"></p>
-<p>只有在NameNode重启时，edit logs才会合并到fsimage文件中，从而得到一个文件系统的最新快照。但是在产品集群中NameNode是很少重启的，这也意味着当NameNode运行了很长时间后，edit logs文件会变得很大。这会引发以下严重问题：1.edit logs文件会变的很大，不容易管理；2.重启会花费很长时间，因为有很多改动，可能经历好几个小时甚至几十个小时，这是不能容忍的。</p>
-<h4 id="Secondary-NameNode-SNN"><a href="#Secondary-NameNode-SNN" class="headerlink" title="Secondary NameNode   (SNN)"></a>Secondary NameNode   (SNN)</h4><p>SecondaryNameNode就是来帮助解决上述问题的，职责是帮助NN合并edits log成fsimage，减少NameNode启动时间</p>
-<p>SNN 合并edits触发条件：<br>1.定期触发。默认一小时。<br>2.时间未到的情况，edits log大小超过容量也会触发。默认 64M。</p>
-<p>配置文件core-site.xml  可设置时间间隔（fs.checkpoint.period ）和edits log容量（fs.checkpoint.size）。</p>
-<p><img src="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/5D3FAC2F-F9B2-4F08-B5EA-68771B0BA0F8.png" alt="5D3FAC2F-F9B2-4F08-B5EA-68771B0BA0F8"></p>
-<h2 id="Hadoop-特点"><a href="#Hadoop-特点" class="headerlink" title="Hadoop 特点"></a>Hadoop 特点</h2><p>HDFS也是按照Master和Slave的结构。分NameNode、SecondaryNameNode、DataNode这几个角色。</p>
-<p><img src="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/1228818-20180308190320147-1328604927.png" alt="img"></p>
-<p>因其架构方案，拥有很多特点：<br>        保存多个副本，且提供容错机制，副本丢失或宕机自动恢复（默认存3份）。<br>　　可运行在廉价的机器上<br>　　适合大数据的处理。HDFS默认会将文件分割成block。然后将block按键值对存储在HDFS上，并将键值对的映射存到内存中。</p>
-<p>当然HDFS也有其局限性：<br>1.低延时数据访问。在用户交互性的应用中，应用需要在ms或者几个s的时间内得到响应。由于HDFS为高吞吐率做了设计，也因此牺牲了快速响应。对于低延时的应用，可以考虑使用HBase或者Cassandra。<br>2.大量的小文件。标准的HDFS数据块的大小是64M，存储小文件并不会浪费实际的存储空间，但是无疑会增加了在NameNode上的元数据，大量的小文件会影响整个集群的性能。<br>3.多用户写入，修改文件。HDFS的文件只能有一个写入者，而且写操作只能在文件结尾以追加的方式进行。它不支持多个写入者，也不支持在文件写入后，对文件的任意位置的修改。<br>但是在大数据领域，分析的是已经存在的数据，这些数据一旦产生就不会修改，因此，HDFS的这些特性和设计局限也就很容易理解了。HDFS为大数据领域的数据分析，提供了非常重要而且十分基础的文件存储功能。</p>
-<h2 id="Hadoop-HA"><a href="#Hadoop-HA" class="headerlink" title="Hadoop HA"></a>Hadoop HA</h2><h4 id="可靠性"><a href="#可靠性" class="headerlink" title="可靠性"></a>可靠性</h4><ol>
-<li>冗余备份<br>每个文件存储成一系列数据块（Block）。为了容错，文件的所有数据块都会有副本（副本数量即复制因子，可配置）（dfs.replication）</li>
-<li>副本存放<br>采用机架感知（Rak-aware）的策略来改进数据的可靠性、高可用和网络带宽的利用率</li>
-<li>心跳检测<br>NameNode周期性地从集群中的每一个DataNode接受心跳包和块报告，收到心跳包说明该DataNode工作正常</li>
-<li>安全模式<br>系统启动时，NameNode会进入一个安全模式。此时不会出现数据块的写操作。</li>
-<li>数据完整性检测<br>HDFS客户端软件实现了对HDFS文件内容的校验和（Checksum）检查（dfs.bytes-per-checksum）。</li>
-</ol>
-<h4 id="单点故障问题"><a href="#单点故障问题" class="headerlink" title="单点故障问题"></a>单点故障问题</h4><p>因为NameNode部署为单点失效，存在单点故障问题，当NameNode，那么客户端或MapReduce作业均无法读写查看文件。注意HDFS已有存储不会丢失。</p>
-<p>解决方案：</p>
-<p>启动一个拥有文件系统元数据的新NameNode（这个一般不采用，因为复制元数据非常耗时间）<br>配置一对活动-备用（Active-Sandby）NameNode，活动NameNode失效时，备用NameNode立即接管，用户不会有明显中断感觉。<br>　　　　共享编辑日志文件（借助NFS、zookeeper等）<br>　　　　DataNode同时向两个NameNode汇报数据块信息<br>　　　　客户端采用特定机制处理 NameNode失效问题，该机制对用户透明</p>
-
       
     </div>
     

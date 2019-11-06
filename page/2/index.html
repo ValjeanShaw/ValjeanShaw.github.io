@@ -255,6 +255,217 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/" class="article-date">
+      <time datetime="2019-08-29T15:51:48.000Z" itemprop="datePublished">2019-08-29</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/">Hadoop系列（三）Hadoop三大核心之HDFS shell常用命令</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <blockquote>
+<p>喵了个喵，我又遇到瓶颈了</p>
+</blockquote>
+<p>[TOC]</p>
+<h2 id="HDFS常用命令"><a href="#HDFS常用命令" class="headerlink" title="HDFS常用命令"></a>HDFS常用命令</h2><h3 id="help-查看所有命令"><a href="#help-查看所有命令" class="headerlink" title="help 查看所有命令"></a>help 查看所有命令</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs help</code></p>
+<h3 id="查看路径文件"><a href="#查看路径文件" class="headerlink" title="查看路径文件"></a>查看路径文件</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -ls /</code></p>
+<h3 id="创建文件夹"><a href="#创建文件夹" class="headerlink" title="创建文件夹"></a>创建文件夹</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -mkdir /test</code></p>
+<h3 id="创建多级文件夹"><a href="#创建多级文件夹" class="headerlink" title="创建多级文件夹"></a>创建多级文件夹</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -mkdir -p /test/test1/test2</code></p>
+<h3 id="查看指定目录下和子目录下所有文件"><a href="#查看指定目录下和子目录下所有文件" class="headerlink" title="查看指定目录下和子目录下所有文件"></a>查看指定目录下和子目录下所有文件</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -ls -R /test</code></p>
+<h3 id="上传文件"><a href="#上传文件" class="headerlink" title="上传文件"></a>上传文件</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -put part.txt /test</code></p>
+<p>or</p>
+<p><code>[172.23.7.9:hadoop]$ hadoop fs -copyFromLocal part.txt /test</code></p>
+<h3 id="下载文件"><a href="#下载文件" class="headerlink" title="下载文件"></a>下载文件</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -get /test/part.txt ~/test</code></p>
+<p>or</p>
+<p><code>[172.23.7.9:hadoop]$ hadoop fs -copyToLocal /test/part.txt ~/test</code></p>
+<h3 id="合并下载"><a href="#合并下载" class="headerlink" title="合并下载"></a>合并下载</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -getmerge /test/part0.txt /test/part1.txt ./temp.txt</code></p>
+<h3 id="复制"><a href="#复制" class="headerlink" title="复制"></a>复制</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -cp /test/part.txt /output</code></p>
+<h3 id="移动"><a href="#移动" class="headerlink" title="移动"></a>移动</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -mv /test/part.txt /output</code></p>
+<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -rm /test/part.txt</code></p>
+<p>强制删除</p>
+<p><code>[172.23.7.9:hadoop]$ hadoop fs -rm -r /test/part.txt</code></p>
+<h3 id="查看文件内容"><a href="#查看文件内容" class="headerlink" title="查看文件内容"></a>查看文件内容</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -cat /test/part.txt</code></p>
+<h3 id="显示文件大小"><a href="#显示文件大小" class="headerlink" title="显示文件大小"></a>显示文件大小</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -du -h /test/part.txt</code></p>
+<h3 id="test"><a href="#test" class="headerlink" title="test"></a>test</h3><p><code>[172.23.7.9:hadoop]$ hadoop fs -test -[ezd] /test/part.txt</code></p>
+<p>选项：<br>-e 检查文件是否存在。如果存在则返回0。<br>-z 检查文件是否是0字节。如果是则返回0。<br>-d 如果路径是个目录，则返回1，否则返回0。</p>
+<h2 id="web界面"><a href="#web界面" class="headerlink" title="web界面"></a>web界面</h2><p><code>http://xx.xx.xx.xx:9870/explorer.html#/</code></p>
+<p><img src="/2019/08/29/Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令/image-20190830010745946.png" alt="image-20190830010745946"></p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hadoop/">Hadoop</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-Hadoop系列（二）Hadoop三个核心之HDFS" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/" class="article-date">
+      <time datetime="2019-08-25T14:27:28.000Z" itemprop="datePublished">2019-08-25</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/">Hadoop系列（二）Hadoop三大核心之HDFS基础</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <blockquote>
+<p>喵了个喵，我又遇到瓶颈了</p>
+</blockquote>
+<p>[TOC]</p>
+<p>针对海量数据，核心问题始终是计算和存储。当数据集的大小超过一台独立物理计算机的存储能力时，就有必要对它进行分区并存储到多台机器上。跨机器存储的文件系统就被成为分布式文件系统。分布式系统架构于网络之上，势必引入网络编程的复杂性，如何实现容忍节点故障但不丢失数据，是HDFS的重要挑战。</p>
+<h2 id="hdfs基础"><a href="#hdfs基础" class="headerlink" title="hdfs基础"></a>hdfs基础</h2><p>Hadoop 自带HDFS分布式文件系统：Hadoop Distributed Filesystem。也简称DFS。主要用来解决海量数据的存储问题。</p>
+<p>HDFS有以下两点特性</p>
+<ul>
+<li>文件系统：用于存储文件，通过统一目录树定位</li>
+<li>分布式：很多机器共同支撑其功能</li>
+</ul>
+<h3 id="重要概念"><a href="#重要概念" class="headerlink" title="重要概念"></a>重要概念</h3><h4 id="数据块"><a href="#数据块" class="headerlink" title="数据块"></a>数据块</h4><p>和一般的文件系统一样，HDFS也有块（block）的概念，HDFS上的文件也被划分为块大小的多个分块作为独立的存储单元。</p>
+<p>Hadoop 1.x 默认大小为64MB, 2.x和3.x均为128MB。具体指定版本的默认值，可参见官网<a href="http://hadoop.apache.org/docs/r3.0.0/hadoop-project-dist/hadoop-hdfs/HdfsDesign.html#Data_Blocks" target="_blank" rel="noopener">块的定义</a>。HDFS的块比磁盘的块大，是为了最小化寻址开销，减少寻址定位所需时间。</p>
+<p>与磁盘文件系统不一样的是*<em>HDFS中小于一个块大小的文件不会占据整个块的空间 *</em>例：当一个1MB的文件存储在一个128MB的块中时，文件只使用1MB的磁盘空间，而不是128MB。当一个150M的文件要存储到HDFS中，将会拆分成2个块，大小分别是128M、22M。</p>
+<p>设置数据块的好处：</p>
+<p>（1）一个文件的大小可以大于集群任意节点磁盘的容量</p>
+<p>（2）容易对数据进行备份，提高容错能力，块丢失可快速从其它节点复制</p>
+<p>（3）使用抽象块概念而非整个文件作为存储单元，大大简化存储子系统的设计</p>
+<p>HDFS集群有两类节点以管理节点-工作节点的方式运行。即NameNode和DataNode。</p>
+<h4 id="NameNode（NN）"><a href="#NameNode（NN）" class="headerlink" title="NameNode（NN）"></a>NameNode（NN）</h4><p>文件系统的管理节点。管理文件系统的命名空间，维护着文本系统树及整棵树内所有文件和目录。基于内存存储，在内存中保存着文件系统每个文件和每个数据块的引用关系以及块信息等。文件目录在NameNode重启后，需要重建。</p>
+<p>功能：</p>
+<ul>
+<li>接收客户端读写服务</li>
+<li>收集DataNode汇报的Block列表信息</li>
+</ul>
+<h4 id="DataNode（DN）"><a href="#DataNode（DN）" class="headerlink" title="DataNode（DN）"></a>DataNode（DN）</h4><p>文件系统的工作节点，多个节点共同工作。本地磁盘目录存储数据，文件形式。</p>
+<p>功能：</p>
+<ul>
+<li>文件形式存储数据（Block）</li>
+<li>存储Block的元数据信息文件 （md5）</li>
+<li>启动时向NameNode汇报block信息</li>
+<li>与NameNode保持心跳连接（3s/次）</li>
+</ul>
+<p>NameNode虽然以内存方式存储，但是NameNode也会在适当时候持久化两类文件到磁盘。</p>
+<ul>
+<li>fsimage：NameNode启动时对整个文件系统的快照</li>
+<li>edit logs：NameNode启动后，对文件系统的改动序列</li>
+</ul>
+<p><img src="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/image-20190827232356723.png" alt="image-20190827232356723"></p>
+<p>只有在NameNode重启时，edit logs才会合并到fsimage文件中，从而得到一个文件系统的最新快照。但是在产品集群中NameNode是很少重启的，这也意味着当NameNode运行了很长时间后，edit logs文件会变得很大。这会引发以下严重问题：1.edit logs文件会变的很大，不容易管理；2.重启会花费很长时间，因为有很多改动，可能经历好几个小时甚至几十个小时，这是不能容忍的。</p>
+<h4 id="Secondary-NameNode-SNN"><a href="#Secondary-NameNode-SNN" class="headerlink" title="Secondary NameNode   (SNN)"></a>Secondary NameNode   (SNN)</h4><p>SecondaryNameNode就是来帮助解决上述问题的，职责是帮助NN合并edits log成fsimage，减少NameNode启动时间</p>
+<p>SNN 合并edits触发条件：<br>1.定期触发。默认一小时。<br>2.时间未到的情况，edits log大小超过容量也会触发。默认 64M。</p>
+<p>配置文件core-site.xml  可设置时间间隔（fs.checkpoint.period ）和edits log容量（fs.checkpoint.size）。</p>
+<p><img src="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/5D3FAC2F-F9B2-4F08-B5EA-68771B0BA0F8.png" alt="5D3FAC2F-F9B2-4F08-B5EA-68771B0BA0F8"></p>
+<h2 id="Hadoop-特点"><a href="#Hadoop-特点" class="headerlink" title="Hadoop 特点"></a>Hadoop 特点</h2><p>HDFS也是按照Master和Slave的结构。分NameNode、SecondaryNameNode、DataNode这几个角色。</p>
+<p><img src="/2019/08/25/Hadoop系列（二）Hadoop三个核心之HDFS/1228818-20180308190320147-1328604927.png" alt="img"></p>
+<p>因其架构方案，拥有很多特点：<br>        保存多个副本，且提供容错机制，副本丢失或宕机自动恢复（默认存3份）。<br>　　可运行在廉价的机器上<br>　　适合大数据的处理。HDFS默认会将文件分割成block。然后将block按键值对存储在HDFS上，并将键值对的映射存到内存中。</p>
+<p>当然HDFS也有其局限性：<br>1.低延时数据访问。在用户交互性的应用中，应用需要在ms或者几个s的时间内得到响应。由于HDFS为高吞吐率做了设计，也因此牺牲了快速响应。对于低延时的应用，可以考虑使用HBase或者Cassandra。<br>2.大量的小文件。标准的HDFS数据块的大小是64M，存储小文件并不会浪费实际的存储空间，但是无疑会增加了在NameNode上的元数据，大量的小文件会影响整个集群的性能。<br>3.多用户写入，修改文件。HDFS的文件只能有一个写入者，而且写操作只能在文件结尾以追加的方式进行。它不支持多个写入者，也不支持在文件写入后，对文件的任意位置的修改。<br>但是在大数据领域，分析的是已经存在的数据，这些数据一旦产生就不会修改，因此，HDFS的这些特性和设计局限也就很容易理解了。HDFS为大数据领域的数据分析，提供了非常重要而且十分基础的文件存储功能。</p>
+<h2 id="Hadoop-HA"><a href="#Hadoop-HA" class="headerlink" title="Hadoop HA"></a>Hadoop HA</h2><h4 id="可靠性"><a href="#可靠性" class="headerlink" title="可靠性"></a>可靠性</h4><ol>
+<li>冗余备份<br>每个文件存储成一系列数据块（Block）。为了容错，文件的所有数据块都会有副本（副本数量即复制因子，可配置）（dfs.replication）</li>
+<li>副本存放<br>采用机架感知（Rak-aware）的策略来改进数据的可靠性、高可用和网络带宽的利用率</li>
+<li>心跳检测<br>NameNode周期性地从集群中的每一个DataNode接受心跳包和块报告，收到心跳包说明该DataNode工作正常</li>
+<li>安全模式<br>系统启动时，NameNode会进入一个安全模式。此时不会出现数据块的写操作。</li>
+<li>数据完整性检测<br>HDFS客户端软件实现了对HDFS文件内容的校验和（Checksum）检查（dfs.bytes-per-checksum）。</li>
+</ol>
+<h4 id="单点故障问题"><a href="#单点故障问题" class="headerlink" title="单点故障问题"></a>单点故障问题</h4><p>因为NameNode部署为单点失效，存在单点故障问题，当NameNode，那么客户端或MapReduce作业均无法读写查看文件。注意HDFS已有存储不会丢失。</p>
+<p>解决方案：</p>
+<p>启动一个拥有文件系统元数据的新NameNode（这个一般不采用，因为复制元数据非常耗时间）<br>配置一对活动-备用（Active-Sandby）NameNode，活动NameNode失效时，备用NameNode立即接管，用户不会有明显中断感觉。<br>　　　　共享编辑日志文件（借助NFS、zookeeper等）<br>　　　　DataNode同时向两个NameNode汇报数据块信息<br>　　　　客户端采用特定机制处理 NameNode失效问题，该机制对用户透明</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hadoop/">Hadoop</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-Hadoop开篇" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
