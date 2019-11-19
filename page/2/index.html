@@ -180,7 +180,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hadoop/">Hadoop</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/concurrent/">concurrent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/分布式/">分布式</a></li></ul>
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hadoop/">Hadoop</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/concurrent/">concurrent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/分布式/">分布式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/分布式-zookeeper/">分布式 zookeeper</a></li></ul>
                     </div>
                 </section>
                 
@@ -254,6 +254,127 @@
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-Hadoop系列（四）Hadoop三大核心之HDFS-Java-API" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/" class="article-date">
+      <time datetime="2019-09-01T08:51:48.000Z" itemprop="datePublished">2019-09-01</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/09/01/Hadoop系列（四）Hadoop三大核心之HDFS-Java-API/">Hadoop系列（四）Hadoop三大核心之HDFS Java API</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <blockquote>
+<p>喵了个喵，我又遇到瓶颈了</p>
+</blockquote>
+<p>[TOC]</p>
+<p>HDFS 设计的主要目的是对海量数据进行存储，也就是说在其上能够存储很大量的文件。</p>
+<p>HDFS 将这些文件分割之后，存储在不同的 DataNode 上，HDFS 提供了通过Java API 对 HDFS 里面的文件进行操作的功能，数据块在 DataNode 上的存放位置，对于开发者来说是透明的。</p>
+<p>使用 Java API 可以完成对 HDFS 的各种操作，如新建文件、删除文件、读取文件内容等。下面将介绍 HDFS 常用的 Java API 及其编程实例。</p>
+<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><ul>
+<li>Configuration   封装了客户端或者服务器的配置</li>
+<li>FileSystem  文件系统对象，用该对象的方法来对文件进行操作</li>
+<li>FileStatus   用于向客户端展示系统中文件和目录的元数据</li>
+<li>FSDatalnputStream   HDFS 中的输入流，用于读取 Hadoop 文件</li>
+<li>FSDataOutputStream   HDFS 中的输出流，用于写 Hadoop 文件</li>
+<li>Path   用于表示 Hadoop 文件系统中的文件或者目录的路径</li>
+</ul>
+<h2 id="具体操作"><a href="#具体操作" class="headerlink" title="具体操作"></a>具体操作</h2><ol>
+<li>导入maven依赖包</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.hadoop<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>hadoop-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.1.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>初始化配置</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Configuration conf;</span><br><span class="line">FileSystem fileSystem;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">HdfsAPI</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    conf = <span class="keyword">new</span> Configuration();</span><br><span class="line">    conf.set(<span class="string">"dfs.replication"</span>, <span class="string">"2"</span>);</span><br><span class="line">    conf.set(<span class="string">"dfs.blocksize"</span>, <span class="string">"128m"</span>);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        fileSystem = FileSystem.get(<span class="keyword">new</span> URI(<span class="string">"hdfs://$&#123;NameNode&#125;:9000"</span>), conf, <span class="string">"hadoop"</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>get文件   get</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testGet</span><span class="params">()</span> <span class="keyword">throws</span> IllegalArgumentException, IOException </span>&#123;</span><br><span class="line">    fileSystem.copyToLocalFile(<span class="keyword">new</span> Path(<span class="string">"/output/part.txt"</span>), <span class="keyword">new</span> Path(<span class="string">"~/Downloads"</span>));</span><br><span class="line">    fileSystem.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>获取文件信息   ls</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testLs</span><span class="params">()</span> <span class="keyword">throws</span> IllegalArgumentException, IOException </span>&#123;</span><br><span class="line">    RemoteIterator&lt;LocatedFileStatus&gt; listFiles = fileSystem.listFiles(<span class="keyword">new</span> Path(<span class="string">"/"</span>), <span class="keyword">true</span>);</span><br><span class="line">    <span class="keyword">while</span> (listFiles.hasNext()) &#123;</span><br><span class="line">        LocatedFileStatus status = listFiles.next();</span><br><span class="line">        System.out.println(<span class="string">"路径："</span> + status.getPath());</span><br><span class="line">        System.out.println(<span class="string">"块大小："</span> + status.getBlockSize());</span><br><span class="line">        System.out.println(<span class="string">"文件长度："</span> + status.getLen());</span><br><span class="line">        System.out.println(<span class="string">"副本数:"</span> + status.getReplication());</span><br><span class="line">        System.out.println(<span class="string">"块的位置信息："</span> + Arrays.toString(status.getBlockLocations()) + <span class="string">"\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    fileSystem.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li>创建目录，多级目录    mkdir</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testMkdir</span><span class="params">()</span> <span class="keyword">throws</span> IllegalArgumentException, IOException </span>&#123;</span><br><span class="line">    fileSystem.mkdirs(<span class="keyword">new</span> Path(<span class="string">"/output/test/testmk"</span>));</span><br><span class="line">    fileSystem.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="6">
+<li>删除文件，目录  rm</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testDeldir</span><span class="params">()</span> <span class="keyword">throws</span> IllegalArgumentException, IOException </span>&#123;</span><br><span class="line">    <span class="keyword">boolean</span> delete = fileSystem.delete(<span class="keyword">new</span> Path(<span class="string">"/output/test/testmk"</span>), <span class="keyword">true</span>);</span><br><span class="line">    <span class="keyword">if</span> (delete) &#123;</span><br><span class="line">        System.out.println(<span class="string">"文件已经删除"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    fileSystem.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="7">
+<li>读取hdfs文件内容</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testReadData</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    FSDataInputStream in = fileSystem.open(<span class="keyword">new</span> Path(<span class="string">"/test.txt"</span>));<span class="comment">//hdfs自带流打开文件</span></span><br><span class="line">    BufferedReader br = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(in, <span class="string">"utf-8"</span>));<span class="comment">//读入流并放在缓冲区</span></span><br><span class="line">    String line = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">while</span> ((line = br.readLine()) != <span class="keyword">null</span>) &#123;</span><br><span class="line">        System.out.println(line);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    in.close();</span><br><span class="line">    br.close();</span><br><span class="line">    fileSystem.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="8">
+<li>读取hdfs中文件中指定偏移的内容</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testRandomReadData</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    FSDataInputStream in = fileSystem.open(<span class="keyword">new</span> Path(<span class="string">"/test.txt"</span>));</span><br><span class="line">    in.seek(<span class="number">12</span>);<span class="comment">//定位到12位置开始读</span></span><br><span class="line">    <span class="keyword">byte</span>[] buf = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">16</span>];<span class="comment">//往后读取16个位</span></span><br><span class="line">    in.read(buf);<span class="comment">//ba流读到buf中</span></span><br><span class="line">    System.out.println(<span class="keyword">new</span> String(buf));</span><br><span class="line">    in.close();</span><br><span class="line">    fileSystem.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="9">
+<li>数据写到hdfs中</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testWriteData</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    FSDataOutputStream out = fileSystem.create(<span class="keyword">new</span> Path(<span class="string">"/yy.jpg"</span>), <span class="keyword">false</span>);</span><br><span class="line">    FileInputStream in = <span class="keyword">new</span> FileInputStream(<span class="string">"~/Download/wechatpic_20190309221605.jpg"</span>);</span><br><span class="line">    <span class="keyword">byte</span>[] buf = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">    <span class="keyword">int</span> read = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> ((read = in.read(buf)) != -<span class="number">1</span>) &#123;</span><br><span class="line">        out.write(buf, <span class="number">0</span>, read);</span><br><span class="line">    &#125;</span><br><span class="line">    out.close();</span><br><span class="line">    fileSystem.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hadoop/">Hadoop</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-Hadoop系列（三）Hadoop三大核心之HDFS-shell常用命令" class="article article-type-post" itemscope itemprop="blogPost">
   
